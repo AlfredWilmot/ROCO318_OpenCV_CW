@@ -63,7 +63,7 @@ void Dilate_trackbars(void);
 /* inRange stuff */ 
 /*--------------*/
 //reference here: https://docs.opencv.org/3.4/da/d97/tutorial_threshold_inRange.html
-char srcFrameFeed[16] = "Original frame";
+char Source_Feed[16] = "Original frame";
 char Blur_Window[16] = "BlurWindow";
 char Erode_Window[16] = "ErodeWindow";
 char Dilate_Window[16] = "DilateWindow";
@@ -159,11 +159,16 @@ void Dilate_trackbars()
 }
 
 /*-------------------------------------------------*/
-/* Thresholding using inRange() in HSV coloraspce */
+/* Thresholding using inRange() in HSV colorspace */        
 /*-----------------------------------------------*/
+//reference here: https://docs.opencv.org/3.4/da/d97/tutorial_threshold_inRange.html
+
+/* NOTE: MOST OF THE CODE FOR THIS SECTION IS A DIRECT COPY/PASTE */
+
 // Create trackbars.
 // Convert from BGR-to-HSV.
 // Detect object based on HSV range values.
+
 const int max_value_H = 360/2;
 const int max_value = 255;
 const String window_capture_name = "Video Capture";
@@ -221,9 +226,43 @@ void run_HSV_thresh()
     // Detect the object based on HSV Range Values
     inRange(frame_HSV, Scalar(low_H, low_S, low_V), Scalar(high_H, high_S, high_V), frame_threshold);
     // Show the frames
-    imshow(srcFrameFeed, frame);
+    imshow(Source_Feed, frame);
     imshow(HSV_thresh_window, frame_threshold);
 }
+
+/*----------------------------------------------------------*/
+/* Infering pixel color & (x,y) coordinates at mouse click */
+/*--------------------------------------------------------*/
+//reference here: http://opencvexamples.blogspot.com/2014/01/detect-mouse-clicks-and-moves-on-image.html
+//Converting from RGB to HSV (reference):
+
+void mouseEvent(int evt, int x, int y, int flags, void* ) 
+{                    
+
+    if (evt == CV_EVENT_LBUTTONDOWN) 
+    { 
+        Vec3b rgb=frame.at<Vec3b>(y,x);
+        int B=rgb.val[0];
+        int G=rgb.val[1];
+        int R=rgb.val[2];
+
+        Mat HSV;
+        Mat RGB=frame(Rect(x,y,1,1));   //Single-value matrix that is the pixel at point [x,y], RGB encoded by default.
+        cvtColor(RGB, HSV,CV_BGR2HSV);
+
+        Vec3b hsv=HSV.at<Vec3b>(0,0);
+        int H=hsv.val[0];
+        int S=hsv.val[1];
+        int V=hsv.val[2];
+
+        printf("[%d, %d] H:%d, S:%d, V:%d\n\r", 
+                x, y, 
+                H, S, V);
+
+
+    }         
+}
+
 
 
 /* Some reference code: https://raw.githubusercontent.com/kylehounslow/opencv-tuts/master/object-tracking-tut/objectTrackingTut.cpp */
@@ -240,7 +279,7 @@ int main(int, char **)
 
     //namedWindow(Erode_Window);  
     //namedWindow(Dilate_Window);  
-    namedWindow(srcFrameFeed);
+    namedWindow(Source_Feed);
     namedWindow(HSV_thresh_window);
 
     //cvtColor(frame, GrayScale, COLOR_BGR2GRAY); //Alters the frame data to gray and stores in matrix GrayScale
@@ -259,6 +298,10 @@ int main(int, char **)
     Erode_trackbars();
     Dilate_trackbars();
     init_HSV_trackbars();
+
+    //set the callback function for any mouse event
+    setMouseCallback(Source_Feed, mouseEvent, &frame);
+
     while (1)
     {   
 
