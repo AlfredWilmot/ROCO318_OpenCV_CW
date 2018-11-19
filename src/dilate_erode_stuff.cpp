@@ -209,25 +209,25 @@ static void on_high_V_thresh_trackbar(int high_V, void * = NULL)
     setTrackbarPos("High V", window_detection_name, high_V);
 }
 
-void init_HSV_trackbars()
+void init_HSV_trackbars(char output_window[16])
 {
     // Trackbars to set thresholds for HSV values
-    createTrackbar("Low H", HSV_thresh_window, &low_H, max_value_H, on_low_H_thresh_trackbar);
-    createTrackbar("High H", HSV_thresh_window, &high_H, max_value_H, on_high_H_thresh_trackbar);
-    createTrackbar("Low S", HSV_thresh_window, &low_S, max_value, on_low_S_thresh_trackbar);
-    createTrackbar("High S", HSV_thresh_window, &high_S, max_value, on_high_S_thresh_trackbar);
-    createTrackbar("Low V", HSV_thresh_window, &low_V, max_value, on_low_V_thresh_trackbar);
-    createTrackbar("High V", HSV_thresh_window, &high_V, max_value, on_high_V_thresh_trackbar);
+    createTrackbar("Low H", output_window, &low_H, max_value_H, on_low_H_thresh_trackbar);
+    createTrackbar("High H", output_window, &high_H, max_value_H, on_high_H_thresh_trackbar);
+    createTrackbar("Low S", output_window, &low_S, max_value, on_low_S_thresh_trackbar);
+    createTrackbar("High S", output_window, &high_S, max_value, on_high_S_thresh_trackbar);
+    createTrackbar("Low V", output_window, &low_V, max_value, on_low_V_thresh_trackbar);
+    createTrackbar("High V", output_window, &high_V, max_value, on_high_V_thresh_trackbar);
 }
-void run_HSV_thresh()
+void run_HSV_thresh(Mat input_mat, char input_window[16], char output_window[16])
 {
     // Convert from BGR to HSV colorspace
-    cvtColor(frame, frame_HSV, COLOR_BGR2HSV);
+    cvtColor(input_mat, frame_HSV, COLOR_BGR2HSV);
     // Detect the object based on HSV Range Values
     inRange(frame_HSV, Scalar(low_H, low_S, low_V), Scalar(high_H, high_S, high_V), frame_threshold);
     // Show the frames
-    imshow(Source_Feed, frame);
-    imshow(HSV_thresh_window, frame_threshold);
+    imshow(input_window, input_mat);
+    imshow(output_window, frame_threshold);
 }
 
 /*----------------------------------------------------------*/
@@ -318,12 +318,13 @@ int main(int, char **)
     //imshow("RGB_to_HSV", RGB_to_HSV);
     //imshow("BGR_to_HSV", BGR_to_HSV);
 
-    Erode_trackbars();
-    Dilate_trackbars();
-    init_HSV_trackbars();
+    //Erode_trackbars();
+    //Dilate_trackbars();
 
-    //set the callback function for any mouse event
-    setMouseCallback(Source_Feed, mouseEvent, &frame);
+
+    init_HSV_trackbars(HSV_thresh_window); //place the HSV-range trackbars on the output window.
+
+    setMouseCallback(Source_Feed, mouseEvent, &frame); //set the callback function for any mouse event
 
     while (1)
     {   
@@ -333,7 +334,8 @@ int main(int, char **)
         cvtColor(frame, BGR_to_HSV, COLOR_BGR2HSV);
         //doErode(erosion_elem);
         //doDilate(dilation_elem);
-        run_HSV_thresh();
+
+        run_HSV_thresh(frame, Source_Feed, HSV_thresh_window); //input the image being modified, and designate the input/output windows.
 
 
         if (waitKey(30) >= 0)
