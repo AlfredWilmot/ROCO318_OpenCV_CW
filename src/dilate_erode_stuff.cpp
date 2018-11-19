@@ -21,24 +21,31 @@ Mat frame;
 Mat GrayScale;
 Mat Blur;
 //Mat CannyEdit;
-//Mat BGR_to_HSV;
+Mat BGR_to_HSV;
 //Mat RGB_to_HSV;
 
 /* Using ptrs to dictate the filter that will be used on a particular matrix 
     -> Modify Mat address after assignment operator to achieve this         */
-Mat *src = &GrayScale;
+Mat *src = &BGR_to_HSV;
 Mat erosion_dst;
 Mat dilation_dst;
 
+
+
+
+
+/*-------------*/
 /* Blur stuff */
+/*-----------*/
 int blur_qty = 15;       //Initial size of blurring-kernel (15x15).
 int const blur_max = 50; //Maximum size of blurring-kernel.
 
 void doBlur(int, void * );
 void BlurWithTrackbar(void);
 
-
+/*-----------------------*/
 /* Erode & Dilate stuff */
+/*---------------------*/
 // reference here: https://docs.opencv.org/3.4.2/db/df6/tutorial_erosion_dilatation.html
 int erosion_elem = 0;
 int erosion_size = 1;
@@ -52,11 +59,19 @@ void doDilate(int, void *);
 void ErodeWithTrackbars(void);
 void DilateWithTrackbars(void);
 
+/*----------------*/
+/* inRange stuff */ 
+/*--------------*/
+//reference here: https://docs.opencv.org/3.4/da/d97/tutorial_threshold_inRange.html
 char windowName0_[16] = "BlurWindow";
 char windowName1_[16] = "ErodeWindow";
 char windowName2_[16] = "DilateWindow";
 
+
+
+/*----------------------*/
 /* Blur Trackbar stuff */
+/*--------------------*/
 void doBlur(int sliderBarVal, void * = NULL)
 {
     if (sliderBarVal <= 0)
@@ -68,7 +83,6 @@ void doBlur(int sliderBarVal, void * = NULL)
     imshow(&windowName0_[0], Blur);
     printf("Blur kernel-size: %d x %d\n\r", sliderBarVal, sliderBarVal);
 }
-
 void BlurWithTrackbar()
 {
     doBlur(blur_qty);
@@ -76,7 +90,9 @@ void BlurWithTrackbar()
     createTrackbar("Blur value", &windowName0_[0], &blur_qty, blur_max, doBlur);
 }
 
+/*-----------------------*/
 /* Erode Trackbar stuff */
+/*---------------------*/
 void doErode(int erosion_elem, void * = NULL)
 {
     int erosion_type = 0;
@@ -99,8 +115,6 @@ void doErode(int erosion_elem, void * = NULL)
     erode(*src, erosion_dst, element);
     imshow(&windowName1_[0], erosion_dst);
 }
-
-
 void ErodeWithTrackbars()
 {
     doErode(erosion_elem);
@@ -109,7 +123,9 @@ void ErodeWithTrackbars()
     createTrackbar("Kernel size:\n 2n +1", &windowName1_[0], &erosion_size, max_kernel_size, doErode);
 }
 
+/*-----------------------------*/
 /* Dilate with Trackbar stuff */
+/*---------------------------*/
 void doDilate(int dilation_elem, void * = NULL)
 {
     int dilation_type = 0;
@@ -132,7 +148,6 @@ void doDilate(int dilation_elem, void * = NULL)
     dilate(*src, dilation_dst, element);
     imshow(&windowName2_[0], dilation_dst);
 }
-
 void DilateWithTrackbars()
 {
     doDilate(dilation_elem);
@@ -140,6 +155,14 @@ void DilateWithTrackbars()
     createTrackbar("Element:\n 0: Rect \n 1: Cross \n 2: Ellipse", &windowName2_[0], &dilation_elem, max_elem, doDilate);
     createTrackbar("Kernel size:\n 2n +1", &windowName2_[0], &dilation_size, max_kernel_size, doDilate);
 }
+
+/*-------------------------------------------------*/
+/* Thresholding using inRange() in HSV coloraspce */
+/*-----------------------------------------------*/
+// Create trackbars.
+// Convert from BGR-to-HSV.
+// Detect object based on HSV range values.
+
 
 /* Some reference code: https://raw.githubusercontent.com/kylehounslow/opencv-tuts/master/object-tracking-tut/objectTrackingTut.cpp */
 /* From here: https://www.youtube.com/watch?v=bSeFrPrqZ2A */
@@ -149,26 +172,40 @@ int main(int, char **)
     if (!cap.isOpened()) // check if we succeeded and return -1 if not
         return -1;
 
+    /*------------------------------------------*/
+    /* SETUP: Initialize trackbars and windows */
+    /*----------------------------------------*/
+
+    namedWindow(&windowName1_[0]);
+
+
+    cap >> frame; 
+
+    //cvtColor(frame, GrayScale, COLOR_BGR2GRAY); //Alters the frame data to gray and stores in matrix GrayScale
+    //GaussianBlur(GrayScale, Blur, Size(7, 7), 1.5, 1.5); //Alters the GrayScale data to have guassian blur and stores in matrix Blur
+    //Canny(Blur, CannyEdit, 0, 30, 3);                    //Updates the altered Blur data to have canny lines and stores in matrix canny edit
+    //cvtColor(frame, RGB_to_HSV, COLOR_RGB2HSV);
+    cvtColor(frame, BGR_to_HSV, COLOR_BGR2HSV);
+
+    //imshow("Stdfeed", frame);       //Opens a window called feed, containing the camera frame matrix data
+    //imshow("GrayScale", GrayScale); //Opens a window called feed, containing the camera frame matrix data
+    //imshow("Blur", Blur);           //Opens a window called feed, containing the camera frame matrix data
+    //imshow("CannyEdit", CannyEdit); //Opens a window called feed, containing the camera frame matrix data
+    //imshow("RGB_to_HSV", RGB_to_HSV);
+    //imshow("BGR_to_HSV", BGR_to_HSV);
+
+    //BlurWithTrackbar();
+    ErodeWithTrackbars();
+    DilateWithTrackbars();
+
     while (1)
-    {
-        cap >> frame; // get a new frame from video capture and store in matrix frame
+    {   
 
-        cvtColor(frame, GrayScale, COLOR_BGR2GRAY); //Alters the frame data to gray and stores in matrix GrayScale
-        //GaussianBlur(GrayScale, Blur, Size(7, 7), 1.5, 1.5); //Alters the GrayScale data to have guassian blur and stores in matrix Blur
-        //Canny(Blur, CannyEdit, 0, 30, 3);                    //Updates the altered Blur data to have canny lines and stores in matrix canny edit
-        //cvtColor(frame, RGB_to_HSV, COLOR_RGB2HSV);
-        //cvtColor(frame, BGR_to_HSV, COLOR_BGR2HSV);
+        cap >> frame; // get a new frame from video capture and store in matrix frame.
 
-        //imshow("Stdfeed", frame);       //Opens a window called feed, containing the camera frame matrix data
-        //imshow("GrayScale", GrayScale); //Opens a window called feed, containing the camera frame matrix data
-        //imshow("Blur", Blur);           //Opens a window called feed, containing the camera frame matrix data
-        //imshow("CannyEdit", CannyEdit); //Opens a window called feed, containing the camera frame matrix data
-        //imshow("RGB_to_HSV", RGB_to_HSV);
-        //imshow("BGR_to_HSV", BGR_to_HSV);
-
-        //BlurWithTrackbar();
-        ErodeWithTrackbars();
-        DilateWithTrackbars();
+        cvtColor(frame, BGR_to_HSV, COLOR_BGR2HSV);
+        doErode(erosion_elem);
+        doDilate(dilation_elem);
 
         if (waitKey(30) >= 0)
         {
