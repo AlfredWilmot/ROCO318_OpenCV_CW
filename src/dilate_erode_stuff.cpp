@@ -178,32 +178,32 @@ int high_H = max_value_H, high_S = max_value, high_V = max_value;
 
 Mat frame_HSV, frame_threshold;
 
-static void on_low_H_thresh_trackbar(int, void *)
+static void on_low_H_thresh_trackbar(int low_H, void * = NULL)
 {
     low_H = min(high_H-1, low_H);
     setTrackbarPos("Low H", window_detection_name, low_H);
 }
-static void on_high_H_thresh_trackbar(int, void *)
+static void on_high_H_thresh_trackbar(int high_H, void * = NULL)
 {
     high_H = max(high_H, low_H+1);
     setTrackbarPos("High H", window_detection_name, high_H);
 }
-static void on_low_S_thresh_trackbar(int, void *)
+static void on_low_S_thresh_trackbar(int low_S, void * = NULL)
 {
     low_S = min(high_S-1, low_S);
     setTrackbarPos("Low S", window_detection_name, low_S);
 }
-static void on_high_S_thresh_trackbar(int, void *)
+static void on_high_S_thresh_trackbar(int high_S, void * = NULL)
 {
     high_S = max(high_S, low_S+1);
     setTrackbarPos("High S", window_detection_name, high_S);
 }
-static void on_low_V_thresh_trackbar(int, void *)
+static void on_low_V_thresh_trackbar(int low_V, void * = NULL)
 {
     low_V = min(high_V-1, low_V);
     setTrackbarPos("Low V", window_detection_name, low_V);
 }
-static void on_high_V_thresh_trackbar(int, void *)
+static void on_high_V_thresh_trackbar(int high_V, void * = NULL)
 {
     high_V = max(high_V, low_V+1);
     setTrackbarPos("High V", window_detection_name, high_V);
@@ -236,6 +236,27 @@ void run_HSV_thresh()
 //reference here: http://opencvexamples.blogspot.com/2014/01/detect-mouse-clicks-and-moves-on-image.html
 //Converting from RGB to HSV (reference):
 
+void update_HSV_range(int H, int S, int V)
+{
+
+    low_H = H-30;
+    low_S = S-100;
+    low_V = V-30;
+
+    high_H = H+30;
+    high_S = 255;
+    high_V = 255;
+
+    on_high_V_thresh_trackbar(high_V);
+    on_low_V_thresh_trackbar(low_V);
+    on_high_S_thresh_trackbar(high_S);
+    on_low_S_thresh_trackbar(low_S);
+    on_high_H_thresh_trackbar(high_H);
+    on_low_H_thresh_trackbar(low_H);
+
+    //run_HSV_thresh();
+
+}
 void mouseEvent(int evt, int x, int y, int flags, void* ) 
 {                    
 
@@ -260,6 +281,8 @@ void mouseEvent(int evt, int x, int y, int flags, void* )
                 H, S, V);
 
 
+        /* update slider positions (with hysteresis) on mouse-click */
+        update_HSV_range(H,S,V);
     }         
 }
 
