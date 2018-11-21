@@ -1,0 +1,27 @@
+#ifndef __HSV_TRACKBAR__
+#define __HSV_TRACKBAR__
+
+#include "find_paper.hpp"
+
+
+/*----parameters for setting-up HSV thresholding trackbars----*/
+extern const int max_value_H;
+extern const int max_value;
+extern int low_H, low_S, low_V;
+extern int high_H, high_S, high_V;
+
+
+/*----HSV thresholding trackbar----*/
+extern void on_low_H_thresh_trackbar(int, void *);
+extern void on_high_H_thresh_trackbar(int, void *);
+extern void on_low_S_thresh_trackbar(int, void *);
+extern void on_high_S_thresh_trackbar(int, void *);
+extern void on_low_V_thresh_trackbar(int, void *);
+extern void on_high_V_thresh_trackbar(int, void *);
+extern void init_HSV_trackbars();
+extern void run_HSV_thresh();
+extern void update_HSV_range(int, int, int);
+extern void mouseEvent(int, int, int, int, void*) ;
+
+
+#endif
