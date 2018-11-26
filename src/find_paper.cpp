@@ -35,21 +35,37 @@ int main(int, char **)
     namedWindow(pre_process_window);
     namedWindow(post_process_window);
 
-    /* initiaalize HSV thresholding trackbars, 
-    and set the mouse-click callback for sniffing pixel info*/
+    /* Initialize image processing trackbars */
     init_HSV_trackbars(); 
-    setMouseCallback(pre_process_window, mouseEvent, &input_frame); 
+    //init_canny_trackbar(); /**BUG**/
+
+    Mat tmp;
 
     while(1)
     {
         cap >> input_frame; // get a new frame from video capture and store in matrix frame.
+
+        
         imshow(pre_process_window, input_frame); //show the captured frame in the relevant display window.
 
 
-       run_HSV_thresh();
+        //cvtColor(input_frame, tmp, COLOR_BGR2GRAY);
+        //GaussianBlur(input_frame, hsv_thresh_input_frame, Size(7, 7), 1.5, 1.5);
+
+
+
+        //Apply HSV thresholding.
+        run_HSV_thresh();
+        output_frame = hsv_thresh_output_frame;
+
+        //Apply Canny Contour detection.
+
+        //canny_input_frame = hsv_thresh_output_frame;
+        //Canny(canny_input_frame, output_frame, 0, 30, 3);
+
         imshow(post_process_window, output_frame);
 
-        
+
 
         if (waitKey(30) >= 0)
         {

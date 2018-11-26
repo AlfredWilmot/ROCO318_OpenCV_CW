@@ -11,6 +11,8 @@
                 "find_paper.cpp",
                 "HSV_trackbar.hpp",
                 "HSV_trackbar.cpp",
+                "canny_thresh.hpp",
+                "canny_thresh.cpp",
                 "-I/usr/local/include/opencv",
                 "-I/usr/local/include",
                 "-L/usr/local/lib",
