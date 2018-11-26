@@ -8,7 +8,7 @@ RNG rng(12345);
 
 Mat src_gray;
 
-void thresh_callback(int, void* )
+void canny_thresh_callback(int, void* )
 {
   Mat canny_output;
   vector<vector<Point> > contours;
@@ -40,8 +40,8 @@ void cvt_gray_and_blur()
 
 void init_canny_trackbar()
 {
-  createTrackbar( "Canny thresh:", post_process_window, &thresh, max_thresh, thresh_callback );
-  thresh_callback( 0, 0 );
+  createTrackbar( "Canny thresh:", post_process_window, &thresh, max_thresh, canny_thresh_callback );
+  canny_thresh_callback( 0, 0 );
 }
 
 
