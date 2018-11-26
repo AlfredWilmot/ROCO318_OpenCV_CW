@@ -31,5 +31,5 @@ testPFC/
 
 # Executables
 *.exe
-*.out
+src/*.out
 *.app

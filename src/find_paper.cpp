@@ -39,8 +39,6 @@ int main(int, char **)
     init_HSV_trackbars(); 
     //init_canny_trackbar(); /**BUG**/
 
-    Mat tmp;
-
     while(1)
     {
         cap >> input_frame; // get a new frame from video capture and store in matrix frame.
@@ -55,6 +53,7 @@ int main(int, char **)
 
 
         //Apply HSV thresholding.
+        hsv_thresh_input_frame = input_frame;
         run_HSV_thresh();
         output_frame = hsv_thresh_output_frame;
 
