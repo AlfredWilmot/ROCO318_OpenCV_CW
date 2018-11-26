@@ -47,6 +47,9 @@ int main(int, char **)
 
 
        run_HSV_thresh();
+        imshow(post_process_window, output_frame);
+
+        
 
         if (waitKey(30) >= 0)
         {
