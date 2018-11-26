@@ -37,7 +37,7 @@ int main(int, char **)
 
     /* Initialize image processing trackbars */
     init_HSV_trackbars(); 
-    //init_canny_trackbar(); /**BUG**/
+    init_canny_trackbar(); /**BUG**/
 
     while(1)
     {
@@ -48,20 +48,21 @@ int main(int, char **)
 
 
         //cvtColor(input_frame, tmp, COLOR_BGR2GRAY);
-        //GaussianBlur(input_frame, hsv_thresh_input_frame, Size(7, 7), 1.5, 1.5);
-
-
+        
+        
+        //Apply Gaussian blur.
+        GaussianBlur(input_frame, hsv_thresh_input_frame, Size(7, 7), 1.5, 1.5);
 
         //Apply HSV thresholding.
-        hsv_thresh_input_frame = input_frame;
         run_HSV_thresh();
-        output_frame = hsv_thresh_output_frame;
-
+        
+        
         //Apply Canny Contour detection.
+        canny_input_frame = hsv_thresh_output_frame;
+        apply_Canny();
+        
 
-        //canny_input_frame = hsv_thresh_output_frame;
-        //Canny(canny_input_frame, output_frame, 0, 30, 3);
-
+        output_frame = canny_output_frame;
         imshow(post_process_window, output_frame);
 
 
