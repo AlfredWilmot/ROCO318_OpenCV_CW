@@ -9,6 +9,8 @@
                 "-g",
                 "find_paper.hpp",
                 "find_paper.cpp",
+                "morph_ops.hpp",
+                "morph_ops.cpp",
                 "HSV_trackbar.hpp",
                 "HSV_trackbar.cpp",
                 "canny_thresh.hpp",

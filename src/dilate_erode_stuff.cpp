@@ -158,16 +158,9 @@ void Dilate_trackbars()
     createTrackbar("Kernel size:\n 2n +1", Dilate_Window, &dilation_size, max_kernel_size, doDilate);
 }
 
-/*-------------------------------------------------*/
-/* Thresholding using inRange() in HSV colorspace */        
-/*-----------------------------------------------*/
-//reference here: https://docs.opencv.org/3.4/da/d97/tutorial_threshold_inRange.html
 
-/* NOTE: MOST OF THE CODE FOR THIS SECTION IS A DIRECT COPY/PASTE */
 
-// Create trackbars.
-// Convert from BGR-to-HSV.
-// Detect object based on HSV range values.
+
 
 const int max_value_H = 360/2;
 const int max_value = 255;

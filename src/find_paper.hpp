@@ -11,6 +11,7 @@
 
 #include "HSV_trackbar.hpp"
 #include "canny_thresh.hpp"
+#include "morph_ops.hpp"
 
 using namespace cv;
 using namespace std;
@@ -27,6 +28,10 @@ extern Mat hsv_thresh_output_frame;
 /* Canny edge-detection */
 extern Mat canny_input_frame;
 extern Mat canny_output_frame;
+
+/* Morphological operations that use Dilate/ Erode */
+extern Mat morph_input_frame;
+extern Mat morph_output_frame;
 
 
 extern char pre_process_window[16];

@@ -3,6 +3,16 @@
 
 #include "find_paper.hpp"
 
+/*-------------------------------------------------*/
+/* Thresholding using inRange() in HSV colorspace */        
+/*-----------------------------------------------*/
+//reference here: https://docs.opencv.org/3.4/da/d97/tutorial_threshold_inRange.html
+
+/* NOTE: MOST OF THE CODE FOR THIS SECTION IS A DIRECT COPY/PASTE */
+
+// Create trackbars.
+// Convert from BGR-to-HSV.
+// Detect object based on HSV range values.
 
 /*----parameters for setting-up HSV thresholding trackbars----*/
 extern const int max_value_H;
