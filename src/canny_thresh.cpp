@@ -2,7 +2,7 @@
 
 
 Mat canny_input_frame; Mat canny_output_frame;
-int thresh = 100;
+int thresh = 50;
 int max_thresh = 255;
 RNG rng(12345);
 
@@ -16,24 +16,27 @@ void adjust_canny_trackbar_pos(int thresh, void * = NULL)
 
 void apply_Canny()
 {
-  Mat edge, draw;
-  //vector<vector<Point> > contours;
-  //vector<Vec4i> hierarchy;
-  
-  /// Detect edges using canny
-  Canny( canny_input_frame, edge, thresh, thresh*2, 3 );
-  /// Find contours
-  //findContours( edge, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
-  edge.convertTo(draw, CV_8U);
-  /// Draw contours
-  // Mat drawing = Mat::zeros(edge.size(), CV_8UC3 );
-  // for( int i = 0; i< contours.size(); i++ )
-  //    {
-  //      Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
-  //      drawContours( drawing, contours, i, color, 2, 8, hierarchy, 0, Point() );
-  //    }
-  
-  canny_output_frame = draw;
+    vector<vector<Point> > contours;
+    findContours( canny_input_frame, contours, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0) );
+    vector<RotatedRect> minRect( contours.size() );
+    for( size_t i = 0; i < contours.size(); i++ )
+    {
+        minRect[i] = minAreaRect( contours[i] );
+    }
+    canny_output_frame = Mat::zeros( canny_input_frame.size(), CV_8UC3 );
+    for( size_t i = 0; i< contours.size(); i++ )
+    {
+        Scalar color = Scalar( rng.uniform(0, 256), rng.uniform(0,256), rng.uniform(0,256) );
+        // contour
+        drawContours( canny_output_frame, contours, (int)i, color );
+        // rotated rectangle
+        Point2f rect_points[4];
+        minRect[i].points( rect_points );
+        for ( int j = 0; j < 4; j++ )
+        {
+            line( canny_output_frame, rect_points[j], rect_points[(j+1)%4], color );
+        }
+    }
 }
 
 void init_canny_trackbar()
