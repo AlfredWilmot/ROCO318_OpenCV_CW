@@ -9,7 +9,7 @@ extern int max_thresh;
 
 /*----Canny trackbar functions----*/
 extern void adjust_canny_trackbar_pos(int, void* );
-extern void apply_Canny();
+extern void apply_Contours();
 extern void init_canny_trackbar();
 
 #endif

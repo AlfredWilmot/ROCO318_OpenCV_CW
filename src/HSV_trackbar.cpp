@@ -3,15 +3,21 @@
 
 #include "HSV_trackbar.hpp"
 
-
+/* Initialize trackbar parameter values */
 const int max_value_H = 360/2;
 const int max_value = 255;
 int low_H = 0, low_S = 0, low_V = 0;
 int high_H = max_value_H, high_S = max_value, high_V = max_value;
 
+/* Initialize seed */
+int seed_x = 0;
+int seed_y = 0;
+
+/* Define I/O frames */
 Mat hsv_thresh_input_frame;
 Mat hsv_thresh_output_frame;
 
+/*---- Slidbar callback functions ----*/
 void on_low_H_thresh_trackbar(int low_H, void * = NULL)
 {
     low_H = min(high_H-1, low_H);
@@ -44,7 +50,7 @@ void on_high_V_thresh_trackbar(int high_V, void * = NULL)
 }
 
 
-/* initialize HSV thresholding trackbars, and set the mouse-click callback for sniffing pixel info from the camera-frame*/
+/*---- initialize HSV thresholding trackbars, and set the mouse-click callback for sniffing pixel info from the camera-frame ----*/
 void init_HSV_trackbars()
 {
     // Trackbars to set thresholds for HSV values
@@ -57,6 +63,7 @@ void init_HSV_trackbars()
 
     setMouseCallback(pre_process_window, mouseEvent, &hsv_thresh_input_frame); 
 }
+/*---- Applies HSV thresholding to the input frame, using slider parameters ----*/
 void run_HSV_thresh()
 {
     Mat frame_HSV;
@@ -70,7 +77,7 @@ void run_HSV_thresh()
 /* Infering pixel color & (x,y) coordinates at mouse click */
 /*--------------------------------------------------------*/
 //reference here: http://opencvexamples.blogspot.com/2014/01/detect-mouse-clicks-and-moves-on-image.html
-//Converting from RGB to HSV (reference):
+//Converting from RGB to HSV (reference): oh dear...
 
 void update_HSV_range(int H, int S, int V)
 {
@@ -93,15 +100,22 @@ void update_HSV_range(int H, int S, int V)
     //run_HSV_thresh();
 
 }
+
+/*---- User selects pixel in camera-feed window, and some processing is done using the rgb and x,y data of that pixel ----*/
 void mouseEvent(int evt, int x, int y, int flags, void* ) 
 {                    
 
     if (evt == CV_EVENT_LBUTTONDOWN) 
     { 
+        /* decode pixel RGB values */
         Vec3b rgb=hsv_thresh_input_frame.at<Vec3b>(y,x);
         int B=rgb.val[0];
         int G=rgb.val[1];
         int R=rgb.val[2];
+
+        /* Update the new mouse-selected seed pixel coordinates */
+        seed_x = x;
+        seed_y = y;
 
         Mat HSV;
         Mat RGB=hsv_thresh_input_frame(Rect(x,y,1,1));   //Single-value matrix that is the pixel at point [x,y], RGB encoded by default.

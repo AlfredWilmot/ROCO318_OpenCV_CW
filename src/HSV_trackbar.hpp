@@ -33,5 +33,8 @@ extern void run_HSV_thresh();
 extern void update_HSV_range(int, int, int);
 extern void mouseEvent(int, int, int, int, void*) ;
 
+/* Store the x,y location of the user-selected "seed" pixel */
+extern int seed_x;
+extern int seed_y;
 
 #endif

@@ -10,8 +10,16 @@ Mat morph_output_frame;
 
 
 int morph_elem = 0;     //Rectangle kernel type by default.
-int morph_size = 5;     //default Kernel size = 2n+1, n=5.
-int morph_operator = 1; //"Closing" operation by default. (dilasion followed by erosion)
+int morph_size = 5;     //default Kernel size = 2n+1, n=5. 
+int morph_operator = 0; //"Opening" operation by default. (Erosion folowed by dilation)
+
+/*NOTE:
+    -> most appropriate kernel size depends on the physical size of the card (ROI), and it's distance from the camera.
+    -> Opening operator seems to mitigate noise most effectively, and get the highest fidelity bounding rectangle.
+
+
+*/
+
 
 int const max_operator = 4;
 int const max_elem = 2;
