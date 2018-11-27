@@ -1,6 +1,9 @@
 #include "morph_ops.hpp"
 
-
+/*--------------------------------------------*/
+/* Removing noise from HSV-thresholded image */
+/*------------------------------------------*/
+//reference here: https://docs.opencv.org/2.4/doc/tutorials/imgproc/opening_closing_hats/opening_closing_hats.html
 
 Mat morph_input_frame;
 Mat morph_output_frame;
@@ -8,7 +11,7 @@ Mat morph_output_frame;
 
 int morph_elem = 0;     //Rectangle kernel type by default.
 int morph_size = 5;     //default Kernel size = 2n+1, n=5.
-int morph_operator = 0; //"Closing" operation by default. (dilasion followed by erosion)
+int morph_operator = 1; //"Closing" operation by default. (dilasion followed by erosion)
 
 int const max_operator = 4;
 int const max_elem = 2;

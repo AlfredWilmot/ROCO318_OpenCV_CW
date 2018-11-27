@@ -59,10 +59,10 @@ int main(int, char **)
         run_morph();
         
         //Apply Canny Contour detection.
-        Canny( morph_output_frame, canny_output_frame, 50, 150, 3 );
+        //Canny( morph_output_frame, canny_output_frame, 50, 150, 3 );
         
 
-        output_frame = canny_output_frame;
+        output_frame = morph_output_frame;;
         
         imshow(post_process_window, output_frame);
 
