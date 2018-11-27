@@ -48,14 +48,15 @@ int main(int, char **)
         
         imshow(pre_process_window, input_frame); //show the captured frame in the relevant display window.
 
-        //Apply Gaussian blur.
-        GaussianBlur(input_frame, hsv_thresh_input_frame, Size(7, 7), 1.5, 1.5);
-
         //Apply HSV thresholding.
+        hsv_thresh_input_frame = input_frame;
         run_HSV_thresh();
         
+
+        //Apply Gaussian blur.
+        GaussianBlur(hsv_thresh_output_frame, morph_input_frame, Size(7, 7), 1.5, 1.5);
+
         //Apply morphological operations.
-        morph_input_frame = hsv_thresh_output_frame;
         run_morph();
         
         //Apply Canny Contour detection.
