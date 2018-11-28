@@ -29,11 +29,15 @@ void apply_Contours()
     {
         Scalar color = Scalar( rng.uniform(0, 256), rng.uniform(0,256), rng.uniform(0,256) );
 
+
+        // Draw contours...
+        drawContours( canny_output_frame, contours, (int)i, color );
+
         // Only draw the contour & corresponding bounding-box for contours that contain the seed pixel.
         inside_contour = pointPolygonTest(contours[i], Point2f(seed_x, seed_y), false);
         if (inside_contour == 1)
         {
-            // Draw contours...
+                        // Draw contours...
             drawContours( canny_output_frame, contours, (int)i, color );
 
             minRect[i] = minAreaRect( contours[i] );
