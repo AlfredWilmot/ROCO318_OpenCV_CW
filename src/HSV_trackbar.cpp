@@ -79,16 +79,20 @@ void run_HSV_thresh()
 //reference here: http://opencvexamples.blogspot.com/2014/01/detect-mouse-clicks-and-moves-on-image.html
 //Converting from RGB to HSV (reference): oh dear...
 
+int tol_H   = int(float(max_value_H)*0.1);
+int tol_S   = int(float(max_value)*0.1);
+int tol_V   = tol_S;
+
 void update_HSV_range(int H, int S, int V)
 {
 
-    low_H = 0;//H-30;
-    low_S = 0;//S-100;
-    low_V = V-30;
+    low_H = H-tol_H;//H-30;
+    low_S = S-tol_S;//S-100;
+    low_V = V-tol_V;
 
-    high_H = max_value_H;//H+30;
-    high_S = 255;
-    high_V = 255;
+    high_H = H+tol_H;//H+30;
+    high_S = S+tol_S;
+    high_V = V+tol_V;
 
     on_high_V_thresh_trackbar(high_V);
     on_low_V_thresh_trackbar(low_V);

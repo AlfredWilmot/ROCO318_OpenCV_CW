@@ -37,4 +37,6 @@ extern void mouseEvent(int, int, int, int, void*) ;
 extern int seed_x;
 extern int seed_y;
 
+extern void get_xy_pixel_hsv(int,int);
+
 #endif
