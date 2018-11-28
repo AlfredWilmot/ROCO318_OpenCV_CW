@@ -82,11 +82,11 @@ void run_HSV_thresh()
 void update_HSV_range(int H, int S, int V)
 {
 
-    low_H = H-30;
-    low_S = S-100;
+    low_H = 0;//H-30;
+    low_S = 0;//S-100;
     low_V = V-30;
 
-    high_H = H+30;
+    high_H = max_value_H;//H+30;
     high_S = 255;
     high_V = 255;
 
@@ -97,7 +97,7 @@ void update_HSV_range(int H, int S, int V)
     on_high_H_thresh_trackbar(high_H);
     on_low_H_thresh_trackbar(low_H);
 
-    //run_HSV_thresh();
+    run_HSV_thresh();
 
 }
 
@@ -107,6 +107,13 @@ void mouseEvent(int evt, int x, int y, int flags, void* )
 
     if (evt == CV_EVENT_LBUTTONDOWN) 
     { 
+       get_xy_pixel_hsv(x,y);
+    }         
+}
+
+/*---- Pass x,y coordinates of any pixel; updates hsv range accordingly ----*/
+void get_xy_pixel_hsv(int x, int y)
+{
         /* decode pixel RGB values */
         Vec3b rgb=hsv_thresh_input_frame.at<Vec3b>(y,x);
         int B=rgb.val[0];
@@ -133,5 +140,5 @@ void mouseEvent(int evt, int x, int y, int flags, void* )
 
         /* update slider positions (with hysteresis) on mouse-click */
         update_HSV_range(H,S,V);
-    }         
+
 }
