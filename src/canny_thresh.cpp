@@ -7,6 +7,9 @@ int max_thresh = 255;
 RNG rng(12345);
 int inside_contour; //used in conjunction w/ pointPolygonTest() to determine if mouse-clicked seed pixel is inside a given contour.
 
+/* Establishing contour CoM */
+Moments mu;
+Point2f mc;
 
 void adjust_canny_trackbar_pos(int thresh, void * = NULL)
 {
@@ -37,9 +40,11 @@ void apply_Contours()
         inside_contour = pointPolygonTest(contours[i], Point2f(seed_x, seed_y), false);
         if (inside_contour == 1)
         {
-                        // Draw contours...
-            drawContours( canny_output_frame, contours, (int)i, color );
+            /* Calculating CoM */
+            mu = moments( contours[i], false );
+            mc = Point2f( static_cast<float>(mu.m10/mu.m00) , static_cast<float>(mu.m01/mu.m00) );
 
+            /* Defining bounding box for a given contour */
             minRect[i] = minAreaRect( contours[i] );
              // rotated rectangle
             Point2f rect_points[4];
