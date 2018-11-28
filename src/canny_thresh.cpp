@@ -49,6 +49,8 @@ void apply_Contours()
             /* Update seed location to that of CoM to track ROI*/
             seed_x = int(mc.x);
             seed_y = int(mc.y);
+            /* Update the HSV range of the seed (dynamically adjust) */
+            get_xy_pixel_hsv(seed_x, seed_y);
 
             /* Defining bounding box for a given contour */
             minRect[i] = minAreaRect( contours[i] );
