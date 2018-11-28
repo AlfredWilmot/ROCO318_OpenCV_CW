@@ -10,6 +10,7 @@ int inside_contour; //used in conjunction w/ pointPolygonTest() to determine if 
 /* Establishing contour CoM */
 Moments mu;
 Point2f mc;
+Scalar redDot = Scalar(1,0,255);
 
 void adjust_canny_trackbar_pos(int thresh, void * = NULL)
 {
@@ -43,6 +44,11 @@ void apply_Contours()
             /* Calculating CoM */
             mu = moments( contours[i], false );
             mc = Point2f( static_cast<float>(mu.m10/mu.m00) , static_cast<float>(mu.m01/mu.m00) );
+            /* Drawing CoM */
+            circle( canny_output_frame, mc, 4, redDot, -1, 8, 0 );
+            /* Update seed location to that of CoM to track ROI*/
+            seed_x = int(mc.x);
+            seed_y = int(mc.y);
 
             /* Defining bounding box for a given contour */
             minRect[i] = minAreaRect( contours[i] );
