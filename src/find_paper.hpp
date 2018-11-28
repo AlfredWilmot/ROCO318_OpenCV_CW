@@ -24,18 +24,20 @@ extern Mat output_frame;
 /* HSV thresholding */
 extern Mat hsv_thresh_input_frame;
 extern Mat hsv_thresh_output_frame;
+extern char hsv_display_window[32];
 
 /* Canny edge-detection */
 extern Mat canny_input_frame;
 extern Mat canny_output_frame;
+extern char canny_display_window[32];
 
 /* Morphological operations that use Dilate/ Erode */
 extern Mat morph_input_frame;
 extern Mat morph_output_frame;
+extern char morph_display_window[32];
 
-
-extern char pre_process_window[16];
-extern char post_process_window[16];
+extern char pre_process_window[32];
+extern char post_process_window[32];
 
 
 #endif

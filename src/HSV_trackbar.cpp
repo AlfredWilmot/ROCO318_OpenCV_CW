@@ -13,40 +13,42 @@ int high_H = max_value_H, high_S = max_value, high_V = max_value;
 int seed_x = 0;
 int seed_y = 0;
 
-/* Define I/O frames */
+/* Define I/O frames & display window */
 Mat hsv_thresh_input_frame;
 Mat hsv_thresh_output_frame;
+char hsv_display_window[32] = "HSV thresh";
+
 
 /*---- Slidbar callback functions ----*/
 void on_low_H_thresh_trackbar(int low_H, void * = NULL)
 {
     low_H = min(high_H-1, low_H);
-    setTrackbarPos("Low H", post_process_window, low_H);
+    setTrackbarPos("Low H", hsv_display_window, low_H);
 }
 void on_high_H_thresh_trackbar(int high_H, void * = NULL)
 {
     high_H = max(high_H, low_H+1);
-    setTrackbarPos("High H", post_process_window, high_H);
+    setTrackbarPos("High H", hsv_display_window, high_H);
 }
 void on_low_S_thresh_trackbar(int low_S, void * = NULL)
 {
     low_S = min(high_S-1, low_S);
-    setTrackbarPos("Low S", post_process_window, low_S);
+    setTrackbarPos("Low S", hsv_display_window, low_S);
 }
 void on_high_S_thresh_trackbar(int high_S, void * = NULL)
 {
     high_S = max(high_S, low_S+1);
-    setTrackbarPos("High S", post_process_window, high_S);
+    setTrackbarPos("High S", hsv_display_window, high_S);
 }
 void on_low_V_thresh_trackbar(int low_V, void * = NULL)
 {
     low_V = min(high_V-1, low_V);
-    setTrackbarPos("Low V", post_process_window, low_V);
+    setTrackbarPos("Low V", hsv_display_window, low_V);
 }
 void on_high_V_thresh_trackbar(int high_V, void * = NULL)
 {
     high_V = max(high_V, low_V+1);
-    setTrackbarPos("High V", post_process_window, high_V);
+    setTrackbarPos("High V", hsv_display_window, high_V);
 }
 
 
@@ -54,12 +56,12 @@ void on_high_V_thresh_trackbar(int high_V, void * = NULL)
 void init_HSV_trackbars()
 {
     // Trackbars to set thresholds for HSV values
-    createTrackbar("Low H", post_process_window, &low_H, max_value_H, on_low_H_thresh_trackbar);
-    createTrackbar("High H", post_process_window, &high_H, max_value_H, on_high_H_thresh_trackbar);
-    createTrackbar("Low S", post_process_window, &low_S, max_value, on_low_S_thresh_trackbar);
-    createTrackbar("High S", post_process_window, &high_S, max_value, on_high_S_thresh_trackbar);
-    createTrackbar("Low V", post_process_window, &low_V, max_value, on_low_V_thresh_trackbar);
-    createTrackbar("High V", post_process_window, &high_V, max_value, on_high_V_thresh_trackbar);
+    createTrackbar("Low H", hsv_display_window, &low_H, max_value_H, on_low_H_thresh_trackbar);
+    createTrackbar("High H", hsv_display_window, &high_H, max_value_H, on_high_H_thresh_trackbar);
+    createTrackbar("Low S", hsv_display_window, &low_S, max_value, on_low_S_thresh_trackbar);
+    createTrackbar("High S", hsv_display_window, &high_S, max_value, on_high_S_thresh_trackbar);
+    createTrackbar("Low V", hsv_display_window, &low_V, max_value, on_low_V_thresh_trackbar);
+    createTrackbar("High V", hsv_display_window, &high_V, max_value, on_high_V_thresh_trackbar);
 
     setMouseCallback(pre_process_window, mouseEvent, &hsv_thresh_input_frame); 
 }
@@ -79,9 +81,9 @@ void run_HSV_thresh()
 //reference here: http://opencvexamples.blogspot.com/2014/01/detect-mouse-clicks-and-moves-on-image.html
 //Converting from RGB to HSV (reference): oh dear...
 
-int tol_H   = int(float(max_value_H)*0.1);
-int tol_S   = int(float(max_value)*0.1);
-int tol_V   = tol_S;
+int tol_H   = 5;
+int tol_S   = 60;
+int tol_V   = 60;
 
 void update_HSV_range(int H, int S, int V)
 {
@@ -93,6 +95,8 @@ void update_HSV_range(int H, int S, int V)
     high_H = H+tol_H;//H+30;
     high_S = S+tol_S;
     high_V = V+tol_V;
+
+
 
     on_high_V_thresh_trackbar(high_V);
     on_low_V_thresh_trackbar(low_V);

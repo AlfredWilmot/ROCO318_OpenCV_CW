@@ -17,8 +17,8 @@ using namespace std;
 
 Mat input_frame;
 Mat output_frame;
-char pre_process_window[16]  = "Preprocess";
-char post_process_window[16] = "Postprocess";
+char pre_process_window[32]  = "Preprocess";
+char post_process_window[32] = "Postprocess";
 
 
 /* Some reference code: https://raw.githubusercontent.com/kylehounslow/opencv-tuts/master/object-tracking-tut/objectTrackingTut.cpp */
@@ -34,6 +34,9 @@ int main(int, char **)
     /* Initializing viewing windows */   
     namedWindow(pre_process_window);
     namedWindow(post_process_window);
+    namedWindow(hsv_display_window);//strcpy(hsv_display_window, post_process_window);
+    strcpy(canny_display_window, post_process_window);
+    namedWindow(morph_display_window);//strcpy(morph_display_window, post_process_window);
 
     /* Initialize image processing trackbars */
     init_HSV_trackbars(); 
@@ -47,15 +50,17 @@ int main(int, char **)
 
         
         imshow(pre_process_window, input_frame); //show the captured frame in the relevant display window.
+        
 
+        GaussianBlur(hsv_thresh_input_frame, hsv_thresh_input_frame, Size(7, 7), 1.5, 1.5);
 
-        //Apply Gaussian blur.
-        GaussianBlur(input_frame, hsv_thresh_input_frame, Size(7, 7), 1.5, 1.5);
-
-
+        hsv_thresh_input_frame = input_frame;
         //Apply HSV thresholding.
         run_HSV_thresh();
         
+
+        //Apply Gaussian blur.
+        //GaussianBlur(hsv_thresh_output_frame, hsv_thresh_output_frame, Size(7, 7), 1.5, 1.5);
 
         //Apply morphological operations.
         morph_input_frame = hsv_thresh_output_frame;
@@ -66,8 +71,10 @@ int main(int, char **)
         canny_input_frame = morph_output_frame;
         apply_Contours();
 
-        output_frame = canny_output_frame;;
+        output_frame = canny_output_frame;
         
+        imshow(hsv_display_window, hsv_thresh_output_frame);
+        imshow(morph_display_window, morph_output_frame);
         imshow(post_process_window, output_frame);
 
 

@@ -7,7 +7,7 @@
 
 Mat morph_input_frame;
 Mat morph_output_frame;
-
+char morph_display_window[32] = "morph";
 
 int morph_elem = 0;     //Rectangle kernel type by default.
 int morph_size = 5;     //default Kernel size = 2n+1, n=5. 
@@ -33,19 +33,19 @@ void init_morph_ops_trackbars()
 {
     /// Create Trackbar to select Morphology operation
     createTrackbar("Operator:\n 0: Opening - 1: Closing \n 2: Gradient - 3: Top Hat \n 4: Black Hat", 
-                    post_process_window, 
+                    morph_display_window, 
                     &morph_operator, max_operator, 
                     adjust_morph_operation );
 
     /// Create Trackbar to select kernel type
     createTrackbar( "Element:\n 0: Rect - 1: Cross - 2: Ellipse", 
-                    post_process_window,
+                    morph_display_window,
                     &morph_elem, max_elem,
                     adjust_kernel_type );
 
     /// Create Trackbar to choose kernel size
     createTrackbar( "Kernel size:\n 2n +1", 
-                    post_process_window,
+                    morph_display_window,
                     &morph_size, max_kernel_size,
                     adjust_kernel_size );
 }
@@ -53,15 +53,15 @@ void init_morph_ops_trackbars()
 /*---- Callbacks for updating trackbar positions and dependent variable ----*/
 void adjust_morph_operation(int morph_operator, void * = NULL)
 {
-    setTrackbarPos("Operator:\n 0: Opening - 1: Closing \n 2: Gradient - 3: Top Hat \n 4: Black Hat", post_process_window, morph_operator);
+    setTrackbarPos("Operator:\n 0: Opening - 1: Closing \n 2: Gradient - 3: Top Hat \n 4: Black Hat", morph_display_window, morph_operator);
 }
 void adjust_kernel_type(int morph_elem, void * = NULL)
 {
-    setTrackbarPos("Element:\n 0: Rect - 1: Cross - 2: Ellipse", post_process_window, morph_elem);
+    setTrackbarPos("Element:\n 0: Rect - 1: Cross - 2: Ellipse", morph_display_window, morph_elem);
 }
 void adjust_kernel_size(int morph_size, void * = NULL)
 {
-    setTrackbarPos("Kernel size:\n 2n +1", post_process_window, morph_size);
+    setTrackbarPos("Kernel size:\n 2n +1", morph_display_window, morph_size);
 }
 
 /*---- Apply morphological operations as defined by the trackbar values ----*/

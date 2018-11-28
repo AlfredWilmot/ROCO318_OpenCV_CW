@@ -1,7 +1,10 @@
 #include "canny_thresh.hpp"
 
 
-Mat canny_input_frame; Mat canny_output_frame;
+Mat canny_input_frame; 
+Mat canny_output_frame;
+char canny_display_window[32] = "Canny";
+
 int thresh = 50;
 int max_thresh = 255;
 RNG rng(12345);
@@ -15,12 +18,12 @@ Scalar redDot = Scalar(1,0,255);
 void adjust_canny_trackbar_pos(int thresh, void * = NULL)
 {
     high_V = max(high_V, low_V+1);
-    setTrackbarPos("Canny thresh", post_process_window, thresh);
+    setTrackbarPos("Canny thresh", canny_display_window, thresh);
 }
 
 void apply_Contours()
 {
-    Canny( canny_input_frame, canny_input_frame, thresh, thresh*2, 3 );
+    //Canny( canny_input_frame, canny_input_frame, thresh, thresh*2, 3 );
 
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
@@ -33,7 +36,6 @@ void apply_Contours()
     {
         Scalar color = Scalar( rng.uniform(0, 256), rng.uniform(0,256), rng.uniform(0,256) );
 
-
         // Draw contours...
         drawContours( canny_output_frame, contours, (int)i, color );
 
@@ -41,6 +43,7 @@ void apply_Contours()
         inside_contour = pointPolygonTest(contours[i], Point2f(seed_x, seed_y), false);
         if (inside_contour == 1)
         {
+
             /* Calculating CoM */
             mu = moments( contours[i], false );
             mc = Point2f( static_cast<float>(mu.m10/mu.m00) , static_cast<float>(mu.m01/mu.m00) );
@@ -70,5 +73,5 @@ void apply_Contours()
 
 void init_canny_trackbar()
 {
-  createTrackbar( "Canny thresh", post_process_window, &thresh, max_thresh, adjust_canny_trackbar_pos);
+  createTrackbar( "Canny thresh", canny_display_window, &thresh, max_thresh, adjust_canny_trackbar_pos);
 }
