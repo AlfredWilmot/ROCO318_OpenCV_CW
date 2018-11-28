@@ -85,29 +85,55 @@ int tol_H   = 5;
 int tol_S   = 60;
 int tol_V   = 60;
 
-void update_HSV_range(int H, int S, int V)
+int old_Hue = 0;
+int new_Hue = 0;
+int delta = 0;
+int delta_tol = tol_H*4;
+
+int update_HSV_range(int H, int S, int V)
 {
+    if(!mouse_clk)
+    {
+        //do not change trackbar Hue value, if it changes too dramatically from last known value.
+        delta = old_Hue - new_Hue;
+        if( delta <= -1*delta_tol || delta >= delta_tol)
+        {
+            //ignore change, and don't adjust HSV range.
+            return 0;
+        }
 
-    low_H = H-tol_H;//H-30;
-    low_S = S-tol_S;//S-100;
-    low_V = V-tol_V;
+    }
+    else
+    {
 
-    high_H = H+tol_H;//H+30;
-    high_S = S+tol_S;
-    high_V = V+tol_V;
+        low_H = H-tol_H;//H-30;
+        low_S = S-tol_S;//S-100;
+        low_V = V-tol_V;
+
+        high_H = H+tol_H;//H+30;
+        high_S = S+tol_S;
+        high_V = V+tol_V;
 
 
 
-    on_high_V_thresh_trackbar(high_V);
-    on_low_V_thresh_trackbar(low_V);
-    on_high_S_thresh_trackbar(high_S);
-    on_low_S_thresh_trackbar(low_S);
-    on_high_H_thresh_trackbar(high_H);
-    on_low_H_thresh_trackbar(low_H);
+        on_high_V_thresh_trackbar(high_V);
+        on_low_V_thresh_trackbar(low_V);
+        on_high_S_thresh_trackbar(high_S);
+        on_low_S_thresh_trackbar(low_S);
+        on_high_H_thresh_trackbar(high_H);
+        on_low_H_thresh_trackbar(low_H);
 
-    run_HSV_thresh();
+    
+        mouse_clk = false; //reset flag.
+
+        run_HSV_thresh();
+    }
+
+    return 1;
 
 }
+
+bool mouse_clk = true;
 
 /*---- User selects pixel in camera-feed window, and some processing is done using the rgb and x,y data of that pixel ----*/
 void mouseEvent(int evt, int x, int y, int flags, void* ) 
@@ -115,13 +141,18 @@ void mouseEvent(int evt, int x, int y, int flags, void* )
 
     if (evt == CV_EVENT_LBUTTONDOWN) 
     { 
-       get_xy_pixel_hsv(x,y);
+        mouse_clk = true; //set flag.
+        get_xy_pixel_hsv(x,y);
     }         
 }
 
 /*---- Pass x,y coordinates of any pixel; updates hsv range accordingly ----*/
 void get_xy_pixel_hsv(int x, int y)
 {
+
+        /* Store old Hue value */
+        old_Hue = new_Hue;
+
         /* decode pixel RGB values */
         Vec3b rgb=hsv_thresh_input_frame.at<Vec3b>(y,x);
         int B=rgb.val[0];
@@ -144,6 +175,9 @@ void get_xy_pixel_hsv(int x, int y)
         printf("[%d, %d] H:%d, S:%d, V:%d\n\r", 
                 x, y, 
                 H, S, V);
+
+        /* Update new Hue value */
+        new_Hue = H;
 
 
         /* update slider positions (with hysteresis) on mouse-click */

@@ -30,7 +30,7 @@ extern void on_low_V_thresh_trackbar(int, void *);
 extern void on_high_V_thresh_trackbar(int, void *);
 extern void init_HSV_trackbars();
 extern void run_HSV_thresh();
-extern void update_HSV_range(int, int, int);
+extern int update_HSV_range(int, int, int);
 extern void mouseEvent(int, int, int, int, void*) ;
 
 /* Store the x,y location of the user-selected "seed" pixel */
@@ -38,5 +38,5 @@ extern int seed_x;
 extern int seed_y;
 
 extern void get_xy_pixel_hsv(int,int);
-
+extern bool mouse_clk;
 #endif
