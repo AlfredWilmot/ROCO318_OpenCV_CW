@@ -68,6 +68,9 @@ void init_HSV_trackbars()
 /*---- Applies HSV thresholding to the input frame, using slider parameters ----*/
 void run_HSV_thresh()
 {
+    // Apply blur to remove random noise.
+    GaussianBlur(hsv_thresh_input_frame, hsv_thresh_input_frame, Size(7, 7), 1.5, 1.5);
+    
     Mat frame_HSV;
     // Convert from BGR to HSV colorspace
     cvtColor(hsv_thresh_input_frame, frame_HSV, COLOR_BGR2HSV);

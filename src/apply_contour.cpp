@@ -1,12 +1,10 @@
 #include "apply_contour.hpp"
 
 
-Mat canny_input_frame; 
-Mat canny_output_frame;
-char canny_display_window[32] = "Canny";
+Mat contour_input_frame; 
+Mat contour_output_frame;
+char contour_display_window[32] = "Canny";
 
-int thresh = 50;
-int max_thresh = 255;
 RNG rng(12345);
 int inside_contour; //used in conjunction w/ pointPolygonTest() to determine if mouse-clicked seed pixel is inside a given contour.
 
@@ -15,29 +13,23 @@ Moments mu;
 Point2f mc;
 Scalar redDot = Scalar(1,0,255);
 
-void adjust_canny_trackbar_pos(int thresh, void * = NULL)
-{
-    high_V = max(high_V, low_V+1);
-    setTrackbarPos("Canny thresh", canny_display_window, thresh);
-}
-
 void apply_Contours()
 {
-    //Canny( canny_input_frame, canny_input_frame, thresh, thresh*2, 3 );
+    //Canny( contour_input_frame, contour_input_frame, thresh, thresh*2, 3 );
 
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
-    findContours(canny_input_frame, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+    findContours(contour_input_frame, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
     
     vector<RotatedRect> minRect( contours.size() );
 
-    canny_output_frame = Mat::zeros( canny_input_frame.size(), CV_8UC3 );
+    contour_output_frame = Mat::zeros( contour_input_frame.size(), CV_8UC3 );
     for( size_t i = 0; i< contours.size(); i++ )
     {
         Scalar color = Scalar( rng.uniform(0, 256), rng.uniform(0,256), rng.uniform(0,256) );
 
         // Draw contours...
-        drawContours( canny_output_frame, contours, (int)i, color );
+        drawContours( contour_output_frame, contours, (int)i, color );
 
         // Only draw the contour & corresponding bounding-box for contours that contain the seed pixel.
         inside_contour = pointPolygonTest(contours[i], Point2f(seed_x, seed_y), false);
@@ -48,7 +40,7 @@ void apply_Contours()
             mu = moments( contours[i], false );
             mc = Point2f( static_cast<float>(mu.m10/mu.m00) , static_cast<float>(mu.m01/mu.m00) );
             /* Drawing CoM */
-            circle( canny_output_frame, mc, 4, redDot, -1, 8, 0 );
+            circle( contour_output_frame, mc, 4, redDot, -1, 8, 0 );
             /* Update seed location to that of CoM to track ROI*/
             seed_x = int(mc.x);
             seed_y = int(mc.y);
@@ -62,14 +54,9 @@ void apply_Contours()
             minRect[i].points( rect_points );
             for ( int j = 0; j < 4; j++ )
             {
-                line( canny_output_frame, rect_points[j], rect_points[(j+1)%4], color );
+                line( contour_output_frame, rect_points[j], rect_points[(j+1)%4], color );
             }
            printf("seed location: [%d,%d]\n\r", seed_x, seed_y); 
         }
     }
-}
-
-void init_canny_trackbar()
-{
-  createTrackbar( "Canny thresh", canny_display_window, &thresh, max_thresh, adjust_canny_trackbar_pos);
 }

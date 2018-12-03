@@ -35,12 +35,11 @@ int main(int, char **)
     namedWindow(pre_process_window);
     namedWindow(post_process_window);
     namedWindow(hsv_display_window);//strcpy(hsv_display_window, post_process_window);
-    strcpy(canny_display_window, post_process_window);
+    strcpy(contour_display_window, post_process_window);
     namedWindow(morph_display_window);//strcpy(morph_display_window, post_process_window);
 
     /* Initialize image processing trackbars */
     init_HSV_trackbars(); 
-    //init_canny_trackbar();
     init_morph_ops_trackbars();
 
 
@@ -50,9 +49,6 @@ int main(int, char **)
 
         
         imshow(pre_process_window, input_frame); //show the captured frame in the relevant display window.
-        
-
-        GaussianBlur(hsv_thresh_input_frame, hsv_thresh_input_frame, Size(7, 7), 1.5, 1.5);
 
         hsv_thresh_input_frame = input_frame;
         //Apply HSV thresholding.
@@ -67,11 +63,11 @@ int main(int, char **)
         run_morph();
         
         //Apply Canny Contour detection.
-        //Canny( morph_output_frame, canny_output_frame, 50, 150, 3 );
-        canny_input_frame = morph_output_frame;
+        //Canny( morph_output_frame, contour_output_frame, 50, 150, 3 );
+        contour_input_frame = morph_output_frame;
         apply_Contours();
 
-        output_frame = canny_output_frame;
+        output_frame = contour_output_frame;
         
         imshow(hsv_display_window, hsv_thresh_output_frame);
         imshow(morph_display_window, morph_output_frame);
