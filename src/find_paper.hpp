@@ -10,7 +10,7 @@
 #include <iostream>
 
 #include "HSV_trackbar.hpp"
-#include "canny_thresh.hpp"
+#include "apply_contour.hpp"
 #include "morph_ops.hpp"
 
 using namespace cv;
