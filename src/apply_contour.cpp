@@ -1,4 +1,4 @@
-#include "canny_thresh.hpp"
+#include "apply_contour.hpp"
 
 
 Mat canny_input_frame; 
@@ -64,10 +64,8 @@ void apply_Contours()
             {
                 line( canny_output_frame, rect_points[j], rect_points[(j+1)%4], color );
             }
-           printf("seed location: [%d,%d]\n\r", seed_x, seed_y);
+           printf("seed location: [%d,%d]\n\r", seed_x, seed_y); 
         }
-        
-
     }
 }
 

@@ -1,5 +1,5 @@
-#ifndef __CANNY_THRESH__
-#define __CANNY_THRESH__
+#ifndef __APPLY_CONTOUR__
+#define __APPLY_CONTOUR__
 
 #include "find_paper.hpp"
 
