@@ -1,8 +1,3 @@
-// testPFC.cpp : This file contains the 'main' function. Program execution begins and ends there.
-// the contours2.cpp samplke c++ code is reproduced here
-// RUN and adjust slider
-// Understand how it works.
-
 #include "find_paper.hpp"
 
 #include <iostream>
@@ -17,6 +12,8 @@ using namespace std;
 
 Mat input_frame;
 Mat output_frame;
+
+
 char pre_process_window[32]  = "Preprocess";
 char post_process_window[32] = "Postprocess";
 
@@ -31,44 +28,63 @@ int main(int, char **)
         return -1;
     }    
 
-    /* Initializing viewing windows */   
+/* Initializing Main I/O viewing windows */   
     namedWindow(pre_process_window);
     namedWindow(post_process_window);
-    namedWindow(hsv_display_window);//strcpy(hsv_display_window, post_process_window);
-    strcpy(contour_display_window, post_process_window);
-    namedWindow(morph_display_window);//strcpy(morph_display_window, post_process_window);
+    
 
-    /* Initialize image processing trackbars */
+/*-- Initialize new windows & image processing trackbars, where applicable (reuse old windows using strcpy(src,dst)) --*/
+
+/*HSV*/
+    //namedWindow(hsv_display_window);
+    strcpy(hsv_display_window, post_process_window);
     init_HSV_trackbars(); 
+/*MORPH*/
+    //namedWindow(morph_display_window);
+    strcpy(morph_display_window, post_process_window);
     init_morph_ops_trackbars();
+/*CANNY*/
+    namedWindow(canny_display_window);
     init_canny_trackbar();
+/*CONTOURS*/
+    //namedWindow(contour_display_window);
+    strcpy(contour_display_window, post_process_window);
+
+
+
+
+
+
 
     while(1)
     {
         cap >> input_frame; // get a new frame from video capture and store in matrix frame.
 
-        
-        imshow(pre_process_window, input_frame); //show the captured frame in the relevant display window.
+    /*show the captured frame.*/
+        imshow(pre_process_window, input_frame); 
 
-       
-        //Apply HSV thresholding.
-         hsv_thresh_input_frame = input_frame;
+    
+    /*Apply HSV thresholding.*/
+        hsv_thresh_input_frame = input_frame;
         run_HSV_thresh();
         output_frame = hsv_thresh_output_frame;
 
-
-        //Apply morphological operations.
+    /*Apply morphological operations.*/
         morph_input_frame = output_frame;
         run_morph();
         output_frame = morph_output_frame;
-        
-        //Apply Canny Contour detection.
-        contour_input_frame = output_frame;
-        apply_Contours();
-        output_frame = contour_output_frame;
-        
-        
-        imshow(hsv_display_window, hsv_thresh_output_frame);
+    
+    /*Apply Canny edge-detection.*/
+        canny_input_frame = input_frame;
+        apply_Canny();
+        imshow(canny_display_window, canny_output_frame);
+
+    /*Apply Contour-fitting.*/
+        //contour_input_frame = output_frame;
+        //apply_Contours();
+        //output_frame = contour_output_frame;
+    
+    /* Display processed frames in available windows.*/
         imshow(morph_display_window, morph_output_frame);
         imshow(post_process_window, output_frame);
 
