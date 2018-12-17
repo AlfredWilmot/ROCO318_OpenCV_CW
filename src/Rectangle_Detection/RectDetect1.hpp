@@ -23,7 +23,7 @@ class RectDetect1
 private:
 
     /* Class I/O */
-    Mat *_input_frame;
+    static Mat *_input_frame;
     Mat *_output_frame;
 
     /* Gaussian blur params */
@@ -35,8 +35,8 @@ private:
 
     /* Mouse-click event stuff */
     bool _mouse_clk = false;
-    int _seed_x;
-    int _seed_y; 
+    static int _seed_x;
+    static int _seed_y; 
  
 
 
