@@ -178,8 +178,8 @@ int RectDetect1::ROI_H_min = 0;
 /* Applying mask */
 void RectDetect1::get_mask()
 {
-    int thresh = 1;
-
+    int thresh = 5;
+    int step = 20;
     if(_mouse_clk)
     {
 
@@ -189,23 +189,40 @@ void RectDetect1::get_mask()
         y_down  = _seed_y + down_step; 
         
 
-        /* Chech HSV values of current pixel */
+        /* Top-left pixel of ROI mask*/
         get_xy_pixel_hsv(x_left,y_up);
 
 
         if(H <= ROI_H_max + thresh && H > ROI_H_max)
         {   
             ROI_H_max = H;
-            left_step++;
-            y_up++;
+            left_step += step;
+            up_step += step;
         }
         
         else if (H >= ROI_H_min - thresh && H < ROI_H_max)
         {
             ROI_H_min = H;
-            left_step++;
-            y_up++;
+            left_step += step;
+            up_step += step;
         }
+        // else if (H )
+        // {
+
+        // }
+        // else
+        // {
+        //     left_step--;
+        //     y_up--;
+        // }
+
+        /* Bottom-left pixel of ROI mask*/
+        //get_xy_pixel_hsv(x_left,y_down);
+
+
+
+
+
 
         rectangle(  *_input_frame, 
                     Point(x_left,  y_up ), 
