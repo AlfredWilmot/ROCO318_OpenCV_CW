@@ -35,13 +35,29 @@ void RectDetect1::onMouseEvt(int evt, int x, int y, int flags, void* ptr)
     tmp->mouseEvent(evt, x, y, flags);
 }
 
+
+
+int RectDetect1::ROI_HSV[3];
+
 void RectDetect1::mouseEvent(int evt, int x, int y, int flags) 
 {                    
 
     if (evt == CV_EVENT_LBUTTONDOWN) 
     { 
-        _mouse_clk = true; //set flag.
-        get_xy_pixel_hsv(x,y);
+        _mouse_clk = true;      //set flag.
+        get_xy_pixel_hsv(x,y);  //get HSV values of selected pixel. 
+
+        // /* Update the new mouse-selected seed pixel coordinates */
+        _seed_x = x;
+        _seed_y = y;
+
+        /* Store seed-pixel HSV values to serve as starting point of cumulative HSV average. */
+        ROI_HSV[0] = H;
+        ROI_HSV[1] = S;
+        ROI_HSV[2] = V;
+
+        get_mask();
+
     }         
 }
 
@@ -55,7 +71,11 @@ void RectDetect1::mouseEvent(int evt, int x, int y, int flags)
     int *const RectDetect1::S_ptr = &RectDetect1::S;
     int *const RectDetect1::V_ptr = &RectDetect1::V;
 
-/*---- Pass x,y coordinates of any pixel; updates hsv range accordingly ----*/
+
+
+
+
+/*---- Calculates and stores HSV value of pixel at input coordinate x,y ----*/
 void RectDetect1::get_xy_pixel_hsv(int x, int y)
 {
 
@@ -68,22 +88,18 @@ void RectDetect1::get_xy_pixel_hsv(int x, int y)
          int G=rgb.val[1];
          int R=rgb.val[2];
 
-        // /* Update the new mouse-selected seed pixel coordinates */
-        _seed_x = x;
-        _seed_y = y;
-
          Mat HSV;
          Mat RGB= tmp(Rect(x,y,1,1));   //Single-value matrix that is the pixel at point [x,y], RGB encoded by default.
          cvtColor(RGB, HSV,CV_BGR2HSV);
 
          Vec3b hsv=HSV.at<Vec3b>(0,0);
          H=hsv.val[0];
-         S=hsv.val[1];
-         V=hsv.val[2];
+         *S_ptr=hsv.val[1];
+         *V_ptr=hsv.val[2];
 
          printf("[%d, %d] H:%d, S:%d, V:%d\n\r", 
                  x, y, 
-                 *H_ptr, *S_ptr, *V_ptr);
+                 H, *S_ptr, *V_ptr);
 
 }
 
@@ -137,6 +153,17 @@ int RectDetect1::right_step = 2;
 int RectDetect1::down_step = 2;
 int RectDetect1::up_step = 2;
 
+/* Used to update average H in ROI_HSV once all ROI perimeter values have been checked */
+int RectDetect1::count_H = 0;
+int RectDetect1::sum_H = 0;
+
+/* Flags that indicate when a side encloses the ROI */
+bool RectDetect1::left_side_done = false;
+bool RectDetect1::top_side_done = false;
+bool RectDetect1::right_side_done = false;
+bool RectDetect1::bottom_side_done = false;
+
+
 /* Applying mask */
 void RectDetect1::get_mask()
 {
@@ -144,15 +171,80 @@ void RectDetect1::get_mask()
     {
         /* TEST: Draw rectangle around selected pixel */
 
-        rectangle(  *_input_frame, 
-                    Point(_seed_x-left_step,_seed_y-up_step), 
-                    Point(_seed_x+right_step,_seed_y+down_step),
-                    Scalar(0,0,255),
-                    2,
-                    8);
+        int x_left  = _seed_x - left_step;
+        int x_right = _seed_x + right_step;
+        int y_up    = _seed_y - up_step;
+        int y_down  = _seed_y + down_step;
 
-        // check HSV values along left-side.
-        //      if all not outside HSV range, extend outwards.
+        int HSV_thresh = 1;
+
+
+
+        /*reset flag*/
+        left_side_done = false;
+
+        while(!left_side_done)
+        {
+            // check HSV values along left-side.
+            for(int left_y_vals = y_up; left_y_vals <= y_down; left_y_vals++)
+            {
+
+                /* Ignore false readings H==0, for a fixed number of iterations */
+                // for(int k = 0;k<10;k++)
+                // {
+                    get_xy_pixel_hsv(x_left, left_y_vals);
+                //     if(*H_ptr != 0)
+                //     {
+                //         break;
+                //     }
+                // }
+
+                if( ( H >= (ROI_HSV[0] - HSV_thresh) ) && ( H <= (ROI_HSV[0] + HSV_thresh) ) )
+                {
+                    /* make note of sample if within the Hue threshold of the seed pixel */
+                    count_H++;
+                    sum_H += H;
+                }
+                else{
+                    
+                    /* if the sampled pixel is outside the Hue threshold, then disregard it. */
+                }
+
+                printf("x, y: %d, %d\n\r",x_left, left_y_vals);
+            
+            if(count_H == 0 || x_left == 0)
+            {
+                /* If all samples are outside the Hue threshold, 
+                then this side now encloses the ROI. 
+                So stop extending out this side.
+                Also considers edge of window.
+                */
+            left_side_done = true;
+            }
+            else
+            {
+                /* Otherwise, further extend this side.*/
+                x_left--;
+                ROI_HSV[0] = int(float(sum_H)/float(count_H));
+            }
+
+
+
+
+            }
+        }
+
+
+
+
+
+        // check HSV values along the bottom-side
+
+
+
+        
+
+        //      
         // --||-- bottom-side.
         //      if all not outside HSV range, extend outwards.
         // --||-- right-side.

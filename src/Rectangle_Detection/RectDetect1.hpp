@@ -8,6 +8,7 @@
 #include "opencv2/highgui.hpp"
 #include <math.h>
 #include <iostream>
+#include <unistd.h>
 
 using namespace cv;
 using namespace std;
@@ -50,6 +51,16 @@ private:
     static int *const H_ptr;
     static int *const S_ptr;
     static int *const V_ptr;
+
+
+    static int ROI_HSV[3];
+    static int count_H;
+    static int sum_H;
+
+    static bool left_side_done;
+    static bool top_side_done;
+    static bool right_side_done;
+    static bool bottom_side_done;
 
 public:
 
