@@ -55,6 +55,12 @@ void RectDetect1::mouseEvent(int evt, int x, int y, int flags)
         ROI_HSV[0] = H;
         ROI_HSV[1] = S;
         ROI_HSV[2] = V;
+
+        /* Reset ROI perimeter ranges  with each new mouse click */
+        left_step   = 1;
+        right_step  = 1;
+        down_step   = 1;
+        up_step     = 1;
     }         
 }
 
@@ -64,9 +70,7 @@ void RectDetect1::mouseEvent(int evt, int x, int y, int flags)
     int RectDetect1::H = 0;
     int RectDetect1::S = 0;
     int RectDetect1::V = 0;
-    int *const RectDetect1::H_ptr = &RectDetect1::H;
-    int *const RectDetect1::S_ptr = &RectDetect1::S;
-    int *const RectDetect1::V_ptr = &RectDetect1::V;
+
 
 
 
@@ -91,12 +95,12 @@ void RectDetect1::get_xy_pixel_hsv(int x, int y)
 
          Vec3b hsv=HSV.at<Vec3b>(0,0);
          H=hsv.val[0];
-         *S_ptr=hsv.val[1];
-         *V_ptr=hsv.val[2];
+         S=hsv.val[1];
+         V=hsv.val[2];
 
          printf("[%d, %d] H:%d, S:%d, V:%d\n\r", 
                  x, y, 
-                 H, *S_ptr, *V_ptr);
+                 H, S, V);
 
 }
 
@@ -169,6 +173,7 @@ int RectDetect1::y_down  = 0;
 /* Applying mask */
 void RectDetect1::get_mask()
 {
+    int thresh = 3;
 
     if(_mouse_clk)
     {
@@ -178,6 +183,13 @@ void RectDetect1::get_mask()
         y_up    = _seed_y - up_step;
         y_down  = _seed_y + down_step; 
         
+
+        get_xy_pixel_hsv(x_left,y_up);
+        if(H <= ROI_HSV[0] + thresh || H >= ROI_HSV[0] - thresh)
+        {
+
+        }
+
         rectangle(  *_input_frame, 
                     Point(x_left,  y_up ), 
                     Point(x_right, y_down),
@@ -210,3 +222,7 @@ void RectDetect1::show_output_frames()
 {
     imshow(this->window_gauss_name, *_input_frame);
 }
+
+
+
+

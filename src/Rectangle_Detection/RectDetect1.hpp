@@ -10,6 +10,8 @@
 #include <iostream>
 #include <unistd.h>
 
+
+
 using namespace cv;
 using namespace std;
 
@@ -48,9 +50,6 @@ private:
     static int H;
     static int S;
     static int V;
-    static int *const H_ptr;
-    static int *const S_ptr;
-    static int *const V_ptr;
 
 
     static int ROI_HSV[3];
