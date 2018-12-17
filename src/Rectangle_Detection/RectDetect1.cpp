@@ -4,6 +4,7 @@
 /* Initializing static members */
 int RectDetect1::_seed_x = 0;
 int RectDetect1::_seed_y = 0; 
+bool RectDetect1::_mouse_clk = false;
 
 Mat *RectDetect1::_input_frame;
 Mat *RectDetect1::_output_frame;
@@ -44,6 +45,16 @@ void RectDetect1::mouseEvent(int evt, int x, int y, int flags)
     }         
 }
 
+
+
+
+    int RectDetect1::H = 0;
+    int RectDetect1::S = 0;
+    int RectDetect1::V = 0;
+    int *const RectDetect1::H_ptr = &RectDetect1::H;
+    int *const RectDetect1::S_ptr = &RectDetect1::S;
+    int *const RectDetect1::V_ptr = &RectDetect1::V;
+
 /*---- Pass x,y coordinates of any pixel; updates hsv range accordingly ----*/
 void RectDetect1::get_xy_pixel_hsv(int x, int y)
 {
@@ -66,13 +77,14 @@ void RectDetect1::get_xy_pixel_hsv(int x, int y)
          cvtColor(RGB, HSV,CV_BGR2HSV);
 
          Vec3b hsv=HSV.at<Vec3b>(0,0);
-         int H=hsv.val[0];
-         int S=hsv.val[1];
-         int V=hsv.val[2];
+         H=hsv.val[0];
+         S=hsv.val[1];
+         V=hsv.val[2];
 
          printf("[%d, %d] H:%d, S:%d, V:%d\n\r", 
                  x, y, 
-                 H, S, V);
+                 *H_ptr, *S_ptr, *V_ptr);
+
 }
 
 
@@ -113,9 +125,46 @@ void RectDetect1::trackbar_init()
 /* Processing methods */
 void RectDetect1::gauss_blur()
 {
-    GaussianBlur(*_input_frame, *_output_frame, Size(this->_gauss_blur_qty, this->_gauss_blur_qty),0,0);
+    GaussianBlur(*_input_frame, *_input_frame, Size(this->_gauss_blur_qty, this->_gauss_blur_qty),0,0);
+
 }
 
+
+
+
+int RectDetect1::left_step = 2;
+int RectDetect1::right_step = 2;
+int RectDetect1::down_step = 2;
+int RectDetect1::up_step = 2;
+
+/* Applying mask */
+void RectDetect1::get_mask()
+{
+    if(_mouse_clk)
+    {
+        /* TEST: Draw rectangle around selected pixel */
+
+        rectangle(  *_input_frame, 
+                    Point(_seed_x-left_step,_seed_y-up_step), 
+                    Point(_seed_x+right_step,_seed_y+down_step),
+                    Scalar(0,0,255),
+                    2,
+                    8);
+
+        // check HSV values along left-side.
+        //      if all not outside HSV range, extend outwards.
+        // --||-- bottom-side.
+        //      if all not outside HSV range, extend outwards.
+        // --||-- right-side.
+        //      if all not outside HSV range, extend outwards.
+        // --||-- top-side.
+        //     if all not outside HSV range, extend outwards.
+
+        // if all within HSV range, add to cumulative average HSV value.
+        // else, stop cumulative average.
+
+    }
+}
 
 
 
@@ -138,5 +187,5 @@ void RectDetect1::show_input_frames()
 
 void RectDetect1::show_output_frames()
 {
-    imshow(this->window_gauss_name, *_output_frame);
+    imshow(this->window_gauss_name, *_input_frame);
 }

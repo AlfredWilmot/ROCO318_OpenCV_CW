@@ -39,6 +39,7 @@ int main(int, char **)
 
         myRect.show_input_frames();
         myRect.gauss_blur();
+        myRect.get_mask();
         myRect.show_output_frames();
 
         if (waitKey(10) == 27)

@@ -34,11 +34,22 @@ private:
     const String window_gauss_name = "Gaussian Blur";
 
     /* Mouse-click event stuff */
-    bool _mouse_clk = false;
+    static bool _mouse_clk;
     static int _seed_x;
     static int _seed_y; 
- 
 
+    /* Mask parameters */
+    static int left_step;
+    static int right_step;
+    static int down_step;
+    static int up_step;
+
+    static int H;
+    static int S;
+    static int V;
+    static int *const H_ptr;
+    static int *const S_ptr;
+    static int *const V_ptr;
 
 public:
 
@@ -65,6 +76,7 @@ public:
 
     /* Processing methods */
     void gauss_blur();
+    void get_mask();
 };
 
 
