@@ -30,10 +30,6 @@ int main(int, char **)
         return -1;
     }    
 
-    /* Initializing Main I/O viewing windows */   
-    namedWindow(pre_process_window);
-
-
     /* Instantiate a RectDetect1 obj, pass the I/O frame ptrs*/
     RectDetect1 myRect(&input_frame, &output_frame);
 
