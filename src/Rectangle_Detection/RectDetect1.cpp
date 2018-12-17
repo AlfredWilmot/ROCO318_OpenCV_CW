@@ -56,6 +56,11 @@ void RectDetect1::mouseEvent(int evt, int x, int y, int flags)
         ROI_HSV[1] = S;
         ROI_HSV[2] = V;
 
+        /* Reset the max and min Hue thresholds */
+        ROI_H_max = ROI_HSV[0];
+        ROI_H_min = ROI_HSV[0];
+
+
         /* Reset ROI perimeter ranges  with each new mouse click */
         left_step   = 1;
         right_step  = 1;
@@ -149,14 +154,10 @@ void RectDetect1::gauss_blur()
 
 
 
-int RectDetect1::left_step = 20;
-int RectDetect1::right_step = 20;
-int RectDetect1::down_step = 20;
-int RectDetect1::up_step = 20;
-
-/* Used to update average H in ROI_HSV once all ROI perimeter values have been checked */
-int RectDetect1::count_H = 0;
-int RectDetect1::sum_H = 0;
+int RectDetect1::left_step = 1;
+int RectDetect1::right_step = 1;
+int RectDetect1::down_step = 1;
+int RectDetect1::up_step = 1;
 
 /* Flags that indicate when a side encloses the ROI */
 bool RectDetect1::left_side_done = false;
@@ -170,10 +171,14 @@ int RectDetect1::x_right = 0;
 int RectDetect1::y_up    = 0;
 int RectDetect1::y_down  = 0;
 
+/* Max & min Hue values adjusted by generated mask */
+int RectDetect1::ROI_H_max = 0;
+int RectDetect1::ROI_H_min = 0;
+
 /* Applying mask */
 void RectDetect1::get_mask()
 {
-    int thresh = 3;
+    int thresh = 1;
 
     if(_mouse_clk)
     {
@@ -184,10 +189,22 @@ void RectDetect1::get_mask()
         y_down  = _seed_y + down_step; 
         
 
+        /* Chech HSV values of current pixel */
         get_xy_pixel_hsv(x_left,y_up);
-        if(H <= ROI_HSV[0] + thresh || H >= ROI_HSV[0] - thresh)
-        {
 
+
+        if(H <= ROI_H_max + thresh && H > ROI_H_max)
+        {   
+            ROI_H_max = H;
+            left_step++;
+            y_up++;
+        }
+        
+        else if (H >= ROI_H_min - thresh && H < ROI_H_max)
+        {
+            ROI_H_min = H;
+            left_step++;
+            y_up++;
         }
 
         rectangle(  *_input_frame, 

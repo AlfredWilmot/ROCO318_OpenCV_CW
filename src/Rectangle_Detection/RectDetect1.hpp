@@ -53,9 +53,8 @@ private:
 
 
     static int ROI_HSV[3];
-    static int count_H;
-    static int sum_H;
-
+    static int ROI_H_max;
+    static int ROI_H_min;
 
     static int x_left;
     static int x_right;
@@ -66,6 +65,10 @@ private:
     static bool top_side_done;
     static bool right_side_done;
     static bool bottom_side_done;
+
+
+
+
 
 public:
 
