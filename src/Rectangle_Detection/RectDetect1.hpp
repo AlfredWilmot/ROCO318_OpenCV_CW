@@ -57,6 +57,12 @@ private:
     static int count_H;
     static int sum_H;
 
+
+    static int x_left;
+    static int x_right;
+    static int y_up;
+    static int y_down;
+
     static bool left_side_done;
     static bool top_side_done;
     static bool right_side_done;
