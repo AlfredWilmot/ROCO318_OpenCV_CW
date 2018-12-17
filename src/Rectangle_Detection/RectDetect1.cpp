@@ -1,12 +1,12 @@
 #include "RectDetect1.hpp"
 
 
-
+/* Initializing static members */
 int RectDetect1::_seed_x = 0;
 int RectDetect1::_seed_y = 0; 
 
 Mat *RectDetect1::_input_frame;
-
+Mat *RectDetect1::_output_frame;
 
 
 
@@ -14,7 +14,7 @@ Mat *RectDetect1::_input_frame;
 RectDetect1::RectDetect1(Mat *infrm_ptr, Mat *outfrm_ptr)
 {
     _input_frame  = infrm_ptr;
-    this->_output_frame = outfrm_ptr;
+   _output_frame = outfrm_ptr;
 
     /* Setup the named windows */
     namedWindow(this->window_cam);
@@ -113,7 +113,7 @@ void RectDetect1::trackbar_init()
 /* Processing methods */
 void RectDetect1::gauss_blur()
 {
-    GaussianBlur(*_input_frame, *this->_output_frame, Size(this->_gauss_blur_qty, this->_gauss_blur_qty),0,0);
+    GaussianBlur(*_input_frame, *_output_frame, Size(this->_gauss_blur_qty, this->_gauss_blur_qty),0,0);
 }
 
 
@@ -138,5 +138,5 @@ void RectDetect1::show_input_frames()
 
 void RectDetect1::show_output_frames()
 {
-    imshow(this->window_gauss_name, *this->_output_frame);
+    imshow(this->window_gauss_name, *_output_frame);
 }

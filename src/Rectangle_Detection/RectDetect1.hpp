@@ -24,7 +24,7 @@ private:
 
     /* Class I/O */
     static Mat *_input_frame;
-    Mat *_output_frame;
+    static Mat *_output_frame;
 
     /* Gaussian blur params */
     int _gauss_blur_qty = 3, _max_gauss = 100;
