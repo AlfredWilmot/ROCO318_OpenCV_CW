@@ -29,14 +29,24 @@ private:
     /* Gaussian blur params */
     int _gauss_blur_qty = 3, _max_gauss = 100;
 
-    /* Output window names */
+    /* Window names */
+    const String window_cam = "Camera Feed";
     const String window_gauss_name = "Gaussian Blur";
+
+    /* Mouse-click event stuff */
+    bool _mouse_clk = false;
+    int _seed_x;
+    int _seed_y; 
+ 
+
 
 public:
 
     /* Constructor method */
     RectDetect1(Mat *infrm_ptr, Mat *outfrm_ptr);
 
+    /*Show frames from camera feed */
+    void show_input_frames();
     /* Show processed frames */
     void show_output_frames();
 
@@ -48,69 +58,15 @@ public:
     void gauss_blur_callback(int val);
 
 
+    /* Mouse event handling methods */
+    void get_xy_pixel_hsv(int x, int y);
+    static void onMouseEvt(int evt, int x, int y, int flags, void* ptr);
+    void mouseEvent(int evt, int x, int y, int flags);
 
     /* Processing methods */
     void gauss_blur();
 };
 
 
-
-
-
-/* Constructor: stores I/O frame ptr addresses */
-RectDetect1::RectDetect1(Mat *infrm_ptr, Mat *outfrm_ptr)
-{
-    this->_input_frame  = infrm_ptr;
-    this->_output_frame = outfrm_ptr;
-
-    /* Setup the named windows */
-    namedWindow(window_gauss_name);
-
-    /* Setup the trackbars */
-    trackbar_init();
-}
-
-void RectDetect1::onGausTrack(int val, void* ptr)
-{
-    RectDetect1* tmp = (RectDetect1*)(ptr);
-    tmp->gauss_blur_callback(val);
-}
-
-
-
-/* Trackbar callbacks */
-void RectDetect1::gauss_blur_callback(int val)
-{
-     if (val % 2 == 0)
-     {
-       val = val + 1;
-     }
-     this->_gauss_blur_qty = val;
-}
-
-
-/* Initialzie all the trackbars */
-void RectDetect1::trackbar_init()
-{
-    createTrackbar("Blur", window_gauss_name, &this->_gauss_blur_qty, this->_max_gauss, RectDetect1::onGausTrack, this);
-}
-
-
-
-
-
-/* Processing methods */
-void RectDetect1::gauss_blur()
-{
-    GaussianBlur(*this->_input_frame, *this->_output_frame, Size(this->_gauss_blur_qty, this->_gauss_blur_qty),0,0);
-}
-
-
-
-/* Show output frames */
-void RectDetect1::show_output_frames()
-{
-    imshow(this->window_gauss_name, *this->_output_frame);
-}
 
 #endif

@@ -10,6 +10,7 @@
                 "-std=c++17",
                 "./Rectangle_Detection/main.cpp",
                 "./Rectangle_Detection/RectDetect1.hpp",
+                "./Rectangle_Detection/RectDetect1.cpp",
                 //"find_paper.hpp",
                 //"find_paper.cpp",
                 //"morph_ops.hpp",

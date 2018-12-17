@@ -41,9 +41,7 @@ int main(int, char **)
     {
         cap >> input_frame; // get a new frame from video capture and store in matrix frame.
 
-        /*show the captured frame.*/
-        imshow(pre_process_window, input_frame); 
-
+        myRect.show_input_frames();
         myRect.gauss_blur();
         myRect.show_output_frames();
 
