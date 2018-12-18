@@ -29,6 +29,8 @@ private:
     static Mat *_input_frame;
     static Mat *_output_frame;
 
+    static Size input_frame_size;
+
     /* Gaussian blur params */
     int _gauss_blur_qty = 3, _max_gauss = 100;
 
@@ -42,7 +44,8 @@ private:
     static int _seed_y; 
 
     /* Mask parameters */
-    static int seed_offset;
+    static int seed_x_offset;
+    static int seed_y_offset;
 
     static int H;
     static int S;
@@ -58,19 +61,16 @@ private:
     static int y_up;
     static int y_down;
 
-    static bool left_side_done;
-    static bool top_side_done;
-    static bool right_side_done;
-    static bool bottom_side_done;
-
-
-
+    static bool up_left_done;
+    static bool down_left_done;
+    static bool down_right_done;
+    static bool up_right_done;
 
 
 public:
 
     /* Constructor method */
-    RectDetect1(Mat *infrm_ptr, Mat *outfrm_ptr);
+    RectDetect1(Mat *infrm, Mat *outfrm);
 
     /*Show frames from camera feed */
     void show_input_frames();
@@ -86,7 +86,7 @@ public:
 
 
     /* Mouse event handling methods */
-    void get_xy_pixel_hsv(int x, int y);
+    int get_xy_pixel_hsv(int x, int y);
     static void onMouseEvt(int evt, int x, int y, int flags, void* ptr);
     void mouseEvent(int evt, int x, int y, int flags);
     
@@ -95,7 +95,7 @@ public:
     /* Processing methods */
     void gauss_blur();
     void get_mask();
-    void update_thresh(int x_dir, int y_dir);
+    bool update_thresh(int x_dir, int y_dir);
 };
 
 

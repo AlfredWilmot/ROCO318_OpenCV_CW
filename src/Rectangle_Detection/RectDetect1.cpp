@@ -9,14 +9,15 @@ bool RectDetect1::_mouse_clk = false;
 Mat *RectDetect1::_input_frame;
 Mat *RectDetect1::_output_frame;
 
-
+Size RectDetect1::input_frame_size;
 
 /* Constructor: stores I/O frame ptr addresses */
-RectDetect1::RectDetect1(Mat *infrm_ptr, Mat *outfrm_ptr)
+RectDetect1::RectDetect1(Mat *infrm, Mat *outfrm)
 {
-    _input_frame  = infrm_ptr;
-   _output_frame = outfrm_ptr;
-
+    /* Reference I/O frames */
+    _input_frame  = infrm;
+   _output_frame  = outfrm;
+    
     /* Setup the named windows */
     namedWindow(this->window_cam);
     namedWindow(this->window_gauss_name);
@@ -31,8 +32,13 @@ RectDetect1::RectDetect1(Mat *infrm_ptr, Mat *outfrm_ptr)
 
 void RectDetect1::onMouseEvt(int evt, int x, int y, int flags, void* ptr)
 {
+    /* Redirection to get handler working */
     RectDetect1* tmp = (RectDetect1*)(ptr);
     tmp->mouseEvent(evt, x, y, flags);
+
+    /* Get frame size */
+    input_frame_size = _input_frame->size(); 
+
 }
 
 
@@ -44,8 +50,14 @@ void RectDetect1::mouseEvent(int evt, int x, int y, int flags)
 
     if (evt == CV_EVENT_LBUTTONDOWN) 
     { 
-        _mouse_clk = true;      //set flag.
-        get_xy_pixel_hsv(x,y);  //get HSV values of selected pixel. 
+        if (get_xy_pixel_hsv(x,y) == 0)  //get HSV values of selected pixel. 
+        {
+             _mouse_clk = true;      //set flag.
+        }
+        else
+        {
+            printf("Selected pixel has a Hue reading of 0.\n\r");
+        }
 
         // /* Update the new mouse-selected seed pixel coordinates */
         _seed_x = x;
@@ -57,12 +69,13 @@ void RectDetect1::mouseEvent(int evt, int x, int y, int flags)
         ROI_HSV[2] = V;
 
         /* Reset the max and min Hue thresholds */
-        ROI_H_max = ROI_HSV[0];
-        ROI_H_min = ROI_HSV[0];
+        ROI_H_max = H;
+        ROI_H_min = H;
 
 
         /* Reset ROI perimeter ranges  with each new mouse click */
-        seed_offset = 1;
+        seed_x_offset = 0;
+        seed_y_offset = 0;
     }         
 }
 
@@ -79,7 +92,7 @@ void RectDetect1::mouseEvent(int evt, int x, int y, int flags)
 
 
 /*---- Calculates and stores HSV value of pixel at input coordinate x,y ----*/
-void RectDetect1::get_xy_pixel_hsv(int x, int y)
+int RectDetect1::get_xy_pixel_hsv(int x, int y)
 {
 
         Mat tmp = *_input_frame;
@@ -96,13 +109,22 @@ void RectDetect1::get_xy_pixel_hsv(int x, int y)
          cvtColor(RGB, HSV,CV_BGR2HSV);
 
          Vec3b hsv=HSV.at<Vec3b>(0,0);
-         H=hsv.val[0];
-         S=hsv.val[1];
-         V=hsv.val[2];
 
-         printf("[%d, %d] H:%d, S:%d, V:%d\n\r", 
-                 x, y, 
-                 H, S, V);
+        if (hsv.val[0] == 0)
+        {
+            return -1;
+        }
+        else
+        {
+            H=hsv.val[0];
+            S=hsv.val[1];
+            V=hsv.val[2];
+        }
+        //  printf("[%d, %d] H:%d, S:%d, V:%d\n\r", 
+        //          x, y, 
+        //          H, S, V);
+
+        return 0;
 
 }
 
@@ -151,13 +173,14 @@ void RectDetect1::gauss_blur()
 
 
 
-int RectDetect1::seed_offset = 1;
+int RectDetect1::seed_x_offset = 0;
+int RectDetect1::seed_y_offset = 0;
 
-/* Flags that indicate when a side encloses the ROI */
-bool RectDetect1::left_side_done = false;
-bool RectDetect1::top_side_done = false;
-bool RectDetect1::right_side_done = false;
-bool RectDetect1::bottom_side_done = false;
+/* Flags that indicate when the Hue thresholding is calibrated */
+bool RectDetect1::up_left_done      = false;
+bool RectDetect1::down_left_done    = false;
+bool RectDetect1::down_right_done   = false;
+bool RectDetect1::up_right_done     = false;
 
 
 int RectDetect1::x_left  = 0;
@@ -166,8 +189,8 @@ int RectDetect1::y_up    = 0;
 int RectDetect1::y_down  = 0;
 
 /* Max & min Hue values adjusted by generated mask */
-int RectDetect1::ROI_H_max = 0;
-int RectDetect1::ROI_H_min = 0;
+int RectDetect1::ROI_H_max = H;
+int RectDetect1::ROI_H_min = H;
 
 /* Applying mask */
 void RectDetect1::get_mask()
@@ -176,64 +199,74 @@ void RectDetect1::get_mask()
     if(_mouse_clk)
     {
 
-        x_left  = _seed_x - seed_offset;
-        x_right = _seed_x + seed_offset;
-        y_up    = _seed_y - seed_offset;
-        y_down  = _seed_y + seed_offset; 
-
-
-        // Top left:     x_left,  y_up
-        // Top right:    x_right, y_up
-        // Bottom left:  x_left, y_down
-        // Bottom right: x_right, y_down
-
-
         /* Check corner pixels of ROI mask */
         for(int state = 0; state < 4; state++)
         {
-            if(state==0)
+            if(state==0 && !up_left_done)
             {
-                update_thresh(x_left, y_up);
+                x_left  = _seed_x - seed_x_offset;
+                y_up    = _seed_y - seed_y_offset;
+
+                up_left_done = update_thresh(x_left, y_up);         //check top-left corner pixel.
             }
-            else if(state==1)
+            else if(state==1 && !down_left_done)
             {
-                update_thresh(x_right, y_up);
+                x_left  = _seed_x - seed_x_offset;
+                y_down  = _seed_y + seed_y_offset; 
+
+                down_left_done = update_thresh(x_left, y_down);      //check bottom-left corner pixel.
             }
-            else if(state==2)
+            else if(state==2 && !down_right_done)
             {
-                update_thresh(x_left, y_down);
+
+                x_right = _seed_x + seed_x_offset;
+                y_down  = _seed_y + seed_y_offset;
+
+                down_right_done = update_thresh(x_right, y_down);    //check bottom-right corner pixel.
             }
-            else if(state==3)
+            else if(state==3 && !up_right_done)
             {
-                update_thresh(x_right, y_down);
+                x_right = _seed_x + seed_x_offset;
+                y_up    = _seed_y - seed_y_offset;
+
+                up_right_done = update_thresh(x_right, y_up);           //check top-right corner pixel.
             }
-            else
-            {
-                throw invalid_argument( "state in get_mask is an invalid value");
-            }
-            state ++;
         }
 
+        /* Stop calibration once maximum ROI Hue threshold ranging is done */
+        if(up_left_done && down_left_done && down_right_done && up_right_done)
+        {
+            /* Reset flags, wait for next calibration trigger */
+            _mouse_clk      = false; 
+            up_left_done    = false;
+            down_left_done  = false;
+            down_right_done = false;
+            up_right_done   = false;
 
-        rectangle(  *_input_frame, 
-                    Point(x_left,  y_up ), 
-                    Point(x_right, y_down),
-                    Scalar(0,0,255),
-                    2,
-                    8);
+            printf("measure ROI Hue range: [%d, %d]\n\r", ROI_H_max, ROI_H_min);
+        }
+
     }
+    /* Shows rectangle bounded by corners used to calibrate Hue range for ROI */
+    rectangle(  *_input_frame, 
+                Point(x_left,  y_up ), 
+                Point(x_right, y_down),
+                Scalar(0,0,255),
+                2,
+                8);
 }
 
 
 
-void RectDetect1::update_thresh(int x_dir, int y_dir)
+bool RectDetect1::update_thresh(int x_dir, int y_dir)
 {
-    int thresh = 3;
-    int step = 5;
+    int thresh = 10;
+    int step = 1;
+
 
     get_xy_pixel_hsv(x_dir, y_dir);
 
-    /* Check if measured pixel Hue is within threshold */
+    /* Check if measured pixel Hue is within threshold*/
     if ( H <= (ROI_H_max + thresh) && H >= (ROI_H_min - thresh) )
     {
 
@@ -248,10 +281,56 @@ void RectDetect1::update_thresh(int x_dir, int y_dir)
             ROI_H_min = H;
         }
 
-        seed_offset += step;
+        /* Only move the ROI corners outwards if no risk of exceeding window boundaries */
+        if
+        (
+            ((x_dir + step) < input_frame_size.width) 
+            && 
+            ((x_dir - step) > 0)
+        )
+        {
+            seed_x_offset += step;
+            printf("%d: %d\n\r", x_dir, input_frame_size.width);
+        }
+        else
+        {
+            /* STOP THRESHOLD FROM EXPANDING */   
+            up_left_done    = true;
+            down_left_done  = true;
+            down_right_done = true;
+            up_right_done   = true;
+            return true; //Stop moving corner if it has hit an x-axis boundary.
+        }
+
+        if
+        (
+            ((y_dir + step) < input_frame_size.height) 
+            && 
+            ((y_dir - step) > 0)
+        )
+        {
+            seed_y_offset += step;
+        }
+        else
+        {         
+            /* STOP THRESHOLD FROM EXPANDING */   
+            up_left_done    = true;
+            down_left_done  = true;
+            down_right_done = true;
+            up_right_done   = true;
+            return true; 
+        }
+
+        return false;
 
     }
+    //Once no longer within the HSV threshld, stop extending the Hue threshold range.
+    else
+    {
+        return true;
+    }
 }
+
 
 
 
