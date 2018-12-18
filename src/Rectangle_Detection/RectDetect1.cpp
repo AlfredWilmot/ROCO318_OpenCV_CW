@@ -167,8 +167,31 @@ void RectDetect1::trackbar_init()
 void RectDetect1::gauss_blur()
 {
     GaussianBlur(*_input_frame, *_input_frame, Size(this->_gauss_blur_qty, this->_gauss_blur_qty),0,0);
-
 }
+
+void RectDetect1::HSV_binarization()
+{
+    /* HSV binarization */
+    const int low_S   = 0;
+    const int high_S  = 255;
+    const int low_V   = 0;
+    const int high_V  = 255;
+    
+    Mat frame_HSV;
+    Mat output;
+    // Convert from BGR to HSV colorspace
+    cvtColor(*_input_frame, frame_HSV, COLOR_BGR2HSV);
+    // Detect the object based on HSV Range Values
+    inRange(frame_HSV, Scalar(ROI_H_min, low_S, low_V), Scalar(ROI_H_max, high_S, high_V), output);
+
+    imshow(this->window_gauss_name, output);
+}
+
+
+
+
+
+
 
 
 
@@ -193,7 +216,7 @@ int RectDetect1::ROI_H_max = H;
 int RectDetect1::ROI_H_min = H;
 
 /* Applying mask */
-void RectDetect1::get_mask()
+int  RectDetect1::get_mask()
 {
     
     if(_mouse_clk)
@@ -244,6 +267,8 @@ void RectDetect1::get_mask()
             up_right_done   = false;
 
             printf("measure ROI Hue range: [%d, %d]\n\r", ROI_H_max, ROI_H_min);
+
+            return 1;//indicate done
         }
 
     }
@@ -254,6 +279,7 @@ void RectDetect1::get_mask()
                 Scalar(0,0,255),
                 2,
                 8);
+    return 0;
 }
 
 
@@ -284,9 +310,9 @@ bool RectDetect1::update_thresh(int x_dir, int y_dir)
         /* Only move the ROI corners outwards if no risk of exceeding window boundaries */
         if
         (
-            ((x_dir + step) < input_frame_size.width) 
+            ((x_dir + step) < (input_frame_size.width-10)) 
             && 
-            ((x_dir - step) > 0)
+            ((x_dir - step) > 10)
         )
         {
             seed_x_offset += step;
@@ -304,9 +330,9 @@ bool RectDetect1::update_thresh(int x_dir, int y_dir)
 
         if
         (
-            ((y_dir + step) < input_frame_size.height) 
+            ((y_dir + step) < (input_frame_size.height-10))
             && 
-            ((y_dir - step) > 0)
+            ((y_dir - step) > 10)
         )
         {
             seed_y_offset += step;

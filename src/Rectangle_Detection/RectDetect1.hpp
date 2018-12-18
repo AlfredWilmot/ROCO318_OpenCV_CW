@@ -29,6 +29,8 @@ private:
     static Mat *_input_frame;
     static Mat *_output_frame;
 
+    static Mat *_mask_frame;
+
     static Size input_frame_size;
 
     /* Gaussian blur params */
@@ -67,6 +69,9 @@ private:
     static bool up_right_done;
 
 
+
+
+
 public:
 
     /* Constructor method */
@@ -94,8 +99,12 @@ public:
 
     /* Processing methods */
     void gauss_blur();
-    void get_mask();
+    int get_mask();
     bool update_thresh(int x_dir, int y_dir);
+
+    void HSV_binarization();
+
+
 };
 
 
