@@ -9,7 +9,7 @@
 #include <math.h>
 #include <iostream>
 #include <unistd.h>
-
+#include <stdexcept>
 
 
 using namespace cv;
@@ -42,10 +42,7 @@ private:
     static int _seed_y; 
 
     /* Mask parameters */
-    static int left_step;
-    static int right_step;
-    static int down_step;
-    static int up_step;
+    static int seed_offset;
 
     static int H;
     static int S;
@@ -92,10 +89,13 @@ public:
     void get_xy_pixel_hsv(int x, int y);
     static void onMouseEvt(int evt, int x, int y, int flags, void* ptr);
     void mouseEvent(int evt, int x, int y, int flags);
+    
+
 
     /* Processing methods */
     void gauss_blur();
     void get_mask();
+    void update_thresh(int x_dir, int y_dir);
 };
 
 

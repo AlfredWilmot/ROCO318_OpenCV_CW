@@ -62,10 +62,7 @@ void RectDetect1::mouseEvent(int evt, int x, int y, int flags)
 
 
         /* Reset ROI perimeter ranges  with each new mouse click */
-        left_step   = 1;
-        right_step  = 1;
-        down_step   = 1;
-        up_step     = 1;
+        seed_offset = 1;
     }         
 }
 
@@ -154,10 +151,7 @@ void RectDetect1::gauss_blur()
 
 
 
-int RectDetect1::left_step = 1;
-int RectDetect1::right_step = 1;
-int RectDetect1::down_step = 1;
-int RectDetect1::up_step = 1;
+int RectDetect1::seed_offset = 1;
 
 /* Flags that indicate when a side encloses the ROI */
 bool RectDetect1::left_side_done = false;
@@ -178,50 +172,47 @@ int RectDetect1::ROI_H_min = 0;
 /* Applying mask */
 void RectDetect1::get_mask()
 {
-    int thresh = 5;
-    int step = 20;
+    
     if(_mouse_clk)
     {
 
-        x_left  = _seed_x - left_step;
-        x_right = _seed_x + right_step;
-        y_up    = _seed_y - up_step;
-        y_down  = _seed_y + down_step; 
-        
-
-        /* Top-left pixel of ROI mask*/
-        get_xy_pixel_hsv(x_left,y_up);
+        x_left  = _seed_x - seed_offset;
+        x_right = _seed_x + seed_offset;
+        y_up    = _seed_y - seed_offset;
+        y_down  = _seed_y + seed_offset; 
 
 
-        if(H <= ROI_H_max + thresh && H > ROI_H_max)
-        {   
-            ROI_H_max = H;
-            left_step += step;
-            up_step += step;
-        }
-        
-        else if (H >= ROI_H_min - thresh && H < ROI_H_max)
+        // Top left:     x_left,  y_up
+        // Top right:    x_right, y_up
+        // Bottom left:  x_left, y_down
+        // Bottom right: x_right, y_down
+
+
+        /* Check corner pixels of ROI mask */
+        for(int state = 0; state < 4; state++)
         {
-            ROI_H_min = H;
-            left_step += step;
-            up_step += step;
+            if(state==0)
+            {
+                update_thresh(x_left, y_up);
+            }
+            else if(state==1)
+            {
+                update_thresh(x_right, y_up);
+            }
+            else if(state==2)
+            {
+                update_thresh(x_left, y_down);
+            }
+            else if(state==3)
+            {
+                update_thresh(x_right, y_down);
+            }
+            else
+            {
+                throw invalid_argument( "state in get_mask is an invalid value");
+            }
+            state ++;
         }
-        // else if (H )
-        // {
-
-        // }
-        // else
-        // {
-        //     left_step--;
-        //     y_up--;
-        // }
-
-        /* Bottom-left pixel of ROI mask*/
-        //get_xy_pixel_hsv(x_left,y_down);
-
-
-
-
 
 
         rectangle(  *_input_frame, 
@@ -230,6 +221,35 @@ void RectDetect1::get_mask()
                     Scalar(0,0,255),
                     2,
                     8);
+    }
+}
+
+
+
+void RectDetect1::update_thresh(int x_dir, int y_dir)
+{
+    int thresh = 3;
+    int step = 5;
+
+    get_xy_pixel_hsv(x_dir, y_dir);
+
+    /* Check if measured pixel Hue is within threshold */
+    if ( H <= (ROI_H_max + thresh) && H >= (ROI_H_min - thresh) )
+    {
+
+        /* Update ROI max/min to expand range of acceptable Hue values to improve mask coverage */
+        if(H > ROI_H_max)
+        {   
+            ROI_H_max = H;
+        }
+
+        else if (H < ROI_H_min)
+        {
+            ROI_H_min = H;
+        }
+
+        seed_offset += step;
+
     }
 }
 
