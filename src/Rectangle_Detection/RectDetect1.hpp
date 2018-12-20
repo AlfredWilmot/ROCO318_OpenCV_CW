@@ -28,24 +28,47 @@ private:
     /* Class I/O */
     static Mat *_input_frame;
     static Mat *_output_frame;
-
-    static Mat *_mask_frame;
+    const String window_cam = "Camera Feed";
+    const String window_gauss_name = "Gaussian Blur";
 
     static Size input_frame_size;
 
-    /* Gaussian blur params */
-    int _gauss_blur_qty = 3, _max_gauss = 100;
+    /* Gaussian blur*/
+    static Mat gauss_input_frame;
+    static Mat gauss_output_frame;
+    const String gauss_display_window = "Gaussian Blur";
 
-    /* Window names */
-    const String window_cam = "Camera Feed";
-    const String window_gauss_name = "Gaussian Blur";
+    int _gauss_blur_qty = 3, _max_gauss = 100;  // Trackbar parameters
+
+    /* HSV thresholding */
+    static Mat hsv_thresh_input_frame;
+    static Mat hsv_thresh_output_frame;
+    const String hsv_display_window = "HSV Threshold";
+
+    /* Contouring */
+    static Mat contour_input_frame;
+    static Mat contour_output_frame;
+    const String contour_display_window = "Contours";
+
+    /* Morphological operations that use Dilate/ Erode */
+    static Mat morph_input_frame;
+    static Mat morph_output_frame;
+    const String morph_display_window = "Mophological Ops";
+
+
+    /* Canny edge-detection */
+    static Mat canny_input_frame;
+    static Mat canny_output_frame;
+    const String canny_display_window = "Canny";
+
+    
 
     /* Mouse-click event stuff */
     static bool _mouse_clk;
     static int _seed_x;
     static int _seed_y; 
 
-    /* Mask parameters */
+    /* ROI Hue rang-finding parameters */
     static int seed_x_offset;
     static int seed_y_offset;
 
@@ -69,7 +92,7 @@ private:
     static bool up_right_done;
 
 
-    int find_Hue_range();
+    int find_Hue_range(); // Method is private.
 
 
 public:
