@@ -6,8 +6,21 @@ int RectDetect1::_seed_x = 0;
 int RectDetect1::_seed_y = 0; 
 bool RectDetect1::_mouse_clk = false;
 
+/* Declaring static variables to get trackbars to function */
 Mat *RectDetect1::_input_frame;
 Mat *RectDetect1::_output_frame;
+Mat *RectDetect1::gauss_input_frame;
+Mat RectDetect1::gauss_output_frame;
+Mat RectDetect1::hsv_thresh_input_frame;
+Mat RectDetect1::hsv_thresh_output_frame;
+Mat RectDetect1::contour_input_frame;
+Mat RectDetect1::contour_output_frame;
+Mat RectDetect1::morph_input_frame;
+Mat RectDetect1::morph_output_frame;
+Mat RectDetect1::canny_input_frame;
+Mat RectDetect1::canny_output_frame;
+
+
 
 Size RectDetect1::input_frame_size;
 
@@ -20,7 +33,10 @@ RectDetect1::RectDetect1(Mat *infrm, Mat *outfrm)
     
     /* Setup the named windows */
     namedWindow(this->window_cam);
-    namedWindow(this->window_gauss_name);
+    namedWindow(this->gauss_display_window);
+    namedWindow(this->hsv_display_window);
+    //namedWindow(this->contour_display_window);
+    //namedWindow(this->morph_display_window);
 
     /* Setup the trackbars */
     trackbar_init();
@@ -166,13 +182,16 @@ void RectDetect1::gauss_blur_callback(int val)
 /* Initialzie all the trackbars */
 void RectDetect1::trackbar_init()
 {
-    createTrackbar("Blur", window_gauss_name, &this->_gauss_blur_qty, this->_max_gauss, RectDetect1::onGausTrack, this);
+    createTrackbar("Blur", gauss_display_window, &this->_gauss_blur_qty, this->_max_gauss, RectDetect1::onGausTrack, this);
 }
 
 /* Processing methods */
 void RectDetect1::gauss_blur()
 {
-    GaussianBlur(*_input_frame, *_input_frame, Size(this->_gauss_blur_qty, this->_gauss_blur_qty),0,0);
+    gauss_input_frame = _input_frame;
+    GaussianBlur(*gauss_input_frame, gauss_output_frame, Size(this->_gauss_blur_qty, this->_gauss_blur_qty),0,0);
+    _output_frame = &gauss_output_frame;
+    imshow(this->gauss_display_window, gauss_output_frame);
 }
 
 void RectDetect1::HSV_binarization()
@@ -190,7 +209,7 @@ void RectDetect1::HSV_binarization()
     // Detect the object based on HSV Range Values
     inRange(frame_HSV, Scalar(ROI_H_min, low_S, low_V), Scalar(ROI_H_max, high_S, high_V), output);
 
-    imshow(this->window_gauss_name, output);
+    imshow(this->hsv_display_window, output);
 }
 
 
@@ -292,26 +311,46 @@ int  RectDetect1::find_Hue_range()
 
 bool RectDetect1::update_thresh(int x_dir, int y_dir)
 {
-    int thresh = 10;
-    int step = 1;
+    int thresh = 1;
+    int step = 2;
 
 
     get_xy_pixel_hsv(x_dir, y_dir);
 
-    /* Check if measured pixel Hue is within threshold*/
-    if ( H <= (ROI_H_max + thresh) && H >= (ROI_H_min - thresh) )
+    /* Check if Hue is wither in the upper threshold or the lower threshold */
+    if  ( 
+            ( 
+                (   H <= (ROI_H_max + thresh) ) 
+            &&
+                ( (ROI_H_max + thresh) < 180  ) 
+            )
+        ||
+            (
+                (   H >= (ROI_H_min - thresh) )
+            &&
+                ( (ROI_H_min - thresh) > 0    )
+            )
+        )
     {
-
-        /* Update ROI max/min to expand range of acceptable Hue values to improve mask coverage */
-        if(H > ROI_H_max)
+        /* Extend Hue max */
+        if  (
+                ( H > ROI_H_max )
+            && 
+                ( H <= (ROI_H_max + thresh) )
+            )
         {   
             ROI_H_max = H;
         }
-
-        else if (H < ROI_H_min)
+        /* Extend Hue Hue min */
+        else if(
+                    ( H < ROI_H_min)
+                &&
+                    ( H >= (ROI_H_min - thresh) )
+                )
         {
             ROI_H_min = H;
         }
+
 
         /* Only move the ROI corners outwards if no risk of exceeding window boundaries */
         if
@@ -341,6 +380,7 @@ bool RectDetect1::update_thresh(int x_dir, int y_dir)
         )
         {
             seed_y_offset += step;
+            return false;
         }
         else
         {         
@@ -349,17 +389,13 @@ bool RectDetect1::update_thresh(int x_dir, int y_dir)
             down_left_done  = true;
             down_right_done = true;
             up_right_done   = true;
-            return true; 
+            return true; //Stop moving corner if it has hit a y-axis boundary.
         }
-
-        return false;
-
     }
-    //Once no longer within the HSV threshld, stop extending the Hue threshold range.
     else
     {
-        return true;
-    }
+        return true;   /* Stop corner creep if it's outside the Hue threshold */ 
+    }  
 }
 
 
@@ -381,12 +417,3 @@ void RectDetect1::show_input_frames()
 {
     imshow(this->window_cam, *_input_frame);
 }
-
-void RectDetect1::show_output_frames()
-{
-    imshow(this->window_gauss_name, *_input_frame);
-}
-
-
-
-

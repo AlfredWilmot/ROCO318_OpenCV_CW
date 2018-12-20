@@ -29,12 +29,11 @@ private:
     static Mat *_input_frame;
     static Mat *_output_frame;
     const String window_cam = "Camera Feed";
-    const String window_gauss_name = "Gaussian Blur";
 
     static Size input_frame_size;
 
     /* Gaussian blur*/
-    static Mat gauss_input_frame;
+    static Mat *gauss_input_frame;
     static Mat gauss_output_frame;
     const String gauss_display_window = "Gaussian Blur";
 
@@ -102,8 +101,6 @@ public:
 
     /*Show frames from camera feed */
     void show_input_frames();
-    /* Show processed frames */
-    void show_output_frames();
 
     /* Trackbar initialization */
     void trackbar_init();
