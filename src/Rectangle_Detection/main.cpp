@@ -8,7 +8,8 @@
 #include <iostream>
 
 /* user-made libraries */
-#include "RectDetect1.hpp"
+//#include "RectDetect1.hpp"
+#include "../Detect_Rectangles/ContourRectangles.hpp"
 
 using namespace cv;
 using namespace std;
@@ -31,15 +32,23 @@ int main(int, char **)
     }    
 
     /* Instantiate a RectDetect1 obj, pass the I/O frame ptrs*/
-    RectDetect1 myRect(&input_frame, &output_frame);
+    //RectDetect1 myRect(&input_frame, &output_frame);
+
+    namedWindow(pre_process_window);
+
+    ContourRectangles myRects(&input_frame, &output_frame);
 
     while(1)
     {
         cap >> input_frame; // get a new frame from video capture and store in matrix frame.
 
-        myRect.show_input_frames();
-        myRect.gauss_blur();
-        myRect.HSV_binarization();
+        // myRect.show_input_frames();
+        // myRect.gauss_blur();
+        // myRect.HSV_binarization();
+
+        imshow(pre_process_window, input_frame);
+
+        myRects.FindRectangles();
 
         if (waitKey(10) == 27)
         {
