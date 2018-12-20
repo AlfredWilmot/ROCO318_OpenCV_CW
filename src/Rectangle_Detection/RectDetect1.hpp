@@ -40,7 +40,7 @@ private:
     int _gauss_blur_qty = 3, _max_gauss = 100;  // Trackbar parameters
 
     /* HSV thresholding */
-    static Mat hsv_thresh_input_frame;
+    static Mat *hsv_thresh_input_frame;
     static Mat hsv_thresh_output_frame;
     const String hsv_display_window = "HSV Threshold";
 

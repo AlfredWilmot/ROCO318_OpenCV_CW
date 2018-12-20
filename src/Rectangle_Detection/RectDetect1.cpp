@@ -11,7 +11,7 @@ Mat *RectDetect1::_input_frame;
 Mat *RectDetect1::_output_frame;
 Mat *RectDetect1::gauss_input_frame;
 Mat RectDetect1::gauss_output_frame;
-Mat RectDetect1::hsv_thresh_input_frame;
+Mat *RectDetect1::hsv_thresh_input_frame;
 Mat RectDetect1::hsv_thresh_output_frame;
 Mat RectDetect1::contour_input_frame;
 Mat RectDetect1::contour_output_frame;
@@ -202,14 +202,13 @@ void RectDetect1::HSV_binarization()
     const int low_V   = 0;
     const int high_V  = 255;
     
-    Mat frame_HSV;
-    Mat output;
+    hsv_thresh_input_frame = &gauss_output_frame;
     // Convert from BGR to HSV colorspace
-    cvtColor(*_input_frame, frame_HSV, COLOR_BGR2HSV);
+    cvtColor(*hsv_thresh_input_frame, hsv_thresh_output_frame, COLOR_BGR2HSV);
     // Detect the object based on HSV Range Values
-    inRange(frame_HSV, Scalar(ROI_H_min, low_S, low_V), Scalar(ROI_H_max, high_S, high_V), output);
+    inRange(hsv_thresh_output_frame, Scalar(ROI_H_min, low_S, low_V), Scalar(ROI_H_max, high_S, high_V), hsv_thresh_output_frame);
 
-    imshow(this->hsv_display_window, output);
+    imshow(this->hsv_display_window, hsv_thresh_output_frame);
 }
 
 
@@ -317,7 +316,7 @@ bool RectDetect1::update_thresh(int x_dir, int y_dir)
 
     get_xy_pixel_hsv(x_dir, y_dir);
 
-    /* Check if Hue is wither in the upper threshold or the lower threshold */
+    /* Check if Hue is either in the upper threshold or the lower threshold */
     if  ( 
             ( 
                 (   H <= (ROI_H_max + thresh) ) 
