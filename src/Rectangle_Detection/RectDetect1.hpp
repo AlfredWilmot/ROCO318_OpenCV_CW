@@ -91,8 +91,16 @@ private:
     static bool up_right_done;
 
 
-    int find_Hue_range(); // Method is private.
+    static int ROI_S_max;
+    static int ROI_S_min;
 
+    static int ROI_V_max;
+    static int ROI_V_min;
+
+
+    /* Private methods (just to be used internally) */
+    int find_Hue_range(); 
+    bool update_thresh(int x_dir, int y_dir);
 
 public:
 
@@ -120,7 +128,7 @@ public:
     /* Processing methods */
     void gauss_blur();
     
-    bool update_thresh(int x_dir, int y_dir);
+    
 
     void HSV_binarization();
 

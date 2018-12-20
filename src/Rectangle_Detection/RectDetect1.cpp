@@ -88,6 +88,10 @@ int RectDetect1::mouseEvent(int evt, int x, int y, int flags)
         /* Reset the max and min Hue thresholds */
         ROI_H_max = H;
         ROI_H_min = H;
+        ROI_S_max = S;
+        ROI_S_min = S;
+        ROI_V_max = V;
+        ROI_V_min = V;
 
 
         /* Reset ROI perimeter ranges  with each new mouse click */
@@ -197,16 +201,16 @@ void RectDetect1::gauss_blur()
 void RectDetect1::HSV_binarization()
 {
     /* HSV binarization */
-    const int low_S   = 0;
-    const int high_S  = 255;
-    const int low_V   = 0;
-    const int high_V  = 255;
+    // const int low_S   = 0;
+    // const int high_S  = 255;
+    // const int low_V   = 0;
+    // const int high_V  = 255;
     
     hsv_thresh_input_frame = &gauss_output_frame;
     // Convert from BGR to HSV colorspace
     cvtColor(*hsv_thresh_input_frame, hsv_thresh_output_frame, COLOR_BGR2HSV);
     // Detect the object based on HSV Range Values
-    inRange(hsv_thresh_output_frame, Scalar(ROI_H_min, low_S, low_V), Scalar(ROI_H_max, high_S, high_V), hsv_thresh_output_frame);
+    inRange(hsv_thresh_output_frame, Scalar(ROI_H_min, ROI_S_min, ROI_V_min), Scalar(ROI_H_max, ROI_S_max, ROI_V_max), hsv_thresh_output_frame);
 
     imshow(this->hsv_display_window, hsv_thresh_output_frame);
 }
@@ -290,7 +294,9 @@ int  RectDetect1::find_Hue_range()
             down_right_done = false;
             up_right_done   = false;
 
-            printf("measure ROI Hue range: [%d, %d]\n\r", ROI_H_max, ROI_H_min);
+            printf("measured ROI Hue range: [%d, %d]\n\r", ROI_H_max, ROI_H_min);
+            printf("measured ROI Saturation range: [%d, %d]\n\r", ROI_S_max, ROI_S_min);
+            printf("measured ROI Value range: [%d, %d]\n\r", ROI_V_max, ROI_V_min);
 
             return 1;//indicate done
         }
@@ -305,6 +311,12 @@ int  RectDetect1::find_Hue_range()
     }
     return 0;
 }
+
+
+int RectDetect1::ROI_S_max = S;
+int RectDetect1::ROI_S_min = S;
+int RectDetect1::ROI_V_max = V;
+int RectDetect1::ROI_V_min = V;
 
 
 /*BUG: TOO DEPENDENT ON INITIAL SEED PIXEL HSV VALUE*/
@@ -349,6 +361,33 @@ bool RectDetect1::update_thresh(int x_dir, int y_dir)
         {
             ROI_H_min = H;
         }
+
+        /*  Update the saturation & value ranges based on HSV data from sampled pixel:
+            This helps filter out some noise.
+        */
+        // ROI_S_max = S ? S > ROI_S_max : ROI_S_max = ROI_S_max;
+        // ROI_S_min = S ? S < ROI_S_min : ROI_S_min = ROI_S_min;
+        // ROI_V_max = V ? V > ROI_V_max : ROI_V_max = ROI_V_max;
+        // ROI_V_min = V ? V < ROI_V_min : ROI_V_min = ROI_V_min;
+
+        if(S > ROI_S_max)
+        {
+            ROI_S_max = S;
+        }
+        if(S < ROI_S_min)
+        {
+            ROI_S_min = S;
+        }
+
+        if(V > ROI_V_max)
+        {
+             ROI_V_max = V;
+        }
+        if(V < ROI_V_min)
+        {
+            ROI_V_min = V;
+        }
+
 
 
         /* Only move the ROI corners outwards if no risk of exceeding window boundaries */
