@@ -11,7 +11,7 @@
 //#include "RectDetect1.hpp"
 #include "../Detect_Rectangles/ContourRectangles.hpp"
 #include "../Detect_Rectangles/GaussianBlurTrackbar.hpp"
-
+#include "../Detect_Rectangles/CannyThresholdTrackbar.hpp"
 using namespace cv;
 using namespace std;
 
@@ -22,7 +22,7 @@ Mat output_frame;
 char pre_process_window[32]  = "Preprocess";
 char post_process_window[32] = "Postprocess";
 const String gaussian_window = "Gaussian Blur";
-
+const String canny_window    = "Canny Thresh";
 
 int main(int, char **)
 {
@@ -40,8 +40,8 @@ int main(int, char **)
     Mat tmp;
 
     //ContourRectangles myRects(&input_frame, &output_frame);
-    GaussianBlurTrackbar myGaussObj(&input_frame, &output_frame, gaussian_window);
-
+    GaussianBlurTrackbar   myGaussObj(&input_frame, &output_frame, gaussian_window);
+    CannyThresholdTrackbar myCannyObj(&input_frame, &output_frame, canny_window);
     while(1)
     {
         cap >> input_frame; // get a new frame from video capture and store in matrix frame.
@@ -51,7 +51,7 @@ int main(int, char **)
         // myRect.HSV_binarization();
 
         
-        myGaussObj.gauss_blur();
+        myCannyObj.canny_thresh();
 
         //myRects.FindRectangles();
 

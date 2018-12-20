@@ -11,6 +11,7 @@
                 "./Rectangle_Detection/main.cpp",
                 "./Detect_Rectangles/ContourRectangles.hpp",
                 "./Detect_Rectangles/GaussianBlurTrackbar.hpp",
+                "./Detect_Rectangles/CannyThresholdTrackbar.hpp",
                 //"./Rectangle_Detection/RectDetect1.hpp",
                 //"./Rectangle_Detection/RectDetect1.cpp",
                 //"find_paper.hpp",
