@@ -308,7 +308,7 @@ int  RectDetect1::find_Hue_range()
 }
 
 
-
+/*BUG: TOO DEPENDENT ON INITIAL SEED PIXEL HSV VALUE*/
 bool RectDetect1::update_thresh(int x_dir, int y_dir)
 {
     int thresh = 1;
