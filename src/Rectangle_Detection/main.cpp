@@ -40,8 +40,8 @@ int main(int, char **)
     Mat tmp;
 
     //ContourRectangles myRects(&input_frame, &output_frame);
-    GaussianBlurTrackbar   myGaussObj(&input_frame, &output_frame, gaussian_window);
-    CannyThresholdTrackbar myCannyObj(&input_frame, &output_frame, canny_window);
+    GaussianBlurTrackbar   myGaussObj(&input_frame, &output_frame, canny_window);
+    CannyThresholdTrackbar myCannyObj(&output_frame, &output_frame, canny_window);
     while(1)
     {
         cap >> input_frame; // get a new frame from video capture and store in matrix frame.
@@ -50,7 +50,7 @@ int main(int, char **)
         // myRect.gauss_blur();
         // myRect.HSV_binarization();
 
-        
+        myGaussObj.gauss_blur();
         myCannyObj.canny_thresh();
 
         //myRects.FindRectangles();
