@@ -69,7 +69,7 @@ private:
     static bool up_right_done;
 
 
-
+    int find_Hue_range();
 
 
 public:
@@ -93,13 +93,13 @@ public:
     /* Mouse event handling methods */
     int get_xy_pixel_hsv(int x, int y);
     static void onMouseEvt(int evt, int x, int y, int flags, void* ptr);
-    void mouseEvent(int evt, int x, int y, int flags);
+    int mouseEvent(int evt, int x, int y, int flags);
     
 
 
     /* Processing methods */
     void gauss_blur();
-    int get_mask();
+    
     bool update_thresh(int x_dir, int y_dir);
 
     void HSV_binarization();

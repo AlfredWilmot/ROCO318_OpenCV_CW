@@ -39,7 +39,6 @@ int main(int, char **)
 
         myRect.show_input_frames();
         myRect.gauss_blur();
-        myRect.get_mask();
         myRect.HSV_binarization();
         //myRect.show_output_frames();
 

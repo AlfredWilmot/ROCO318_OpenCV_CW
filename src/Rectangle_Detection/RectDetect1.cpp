@@ -45,7 +45,7 @@ void RectDetect1::onMouseEvt(int evt, int x, int y, int flags, void* ptr)
 
 int RectDetect1::ROI_HSV[3];
 
-void RectDetect1::mouseEvent(int evt, int x, int y, int flags) 
+int RectDetect1::mouseEvent(int evt, int x, int y, int flags) 
 {                    
 
     if (evt == CV_EVENT_LBUTTONDOWN) 
@@ -57,6 +57,7 @@ void RectDetect1::mouseEvent(int evt, int x, int y, int flags)
         else
         {
             printf("Selected pixel has a Hue reading of 0.\n\r");
+            return -1;
         }
 
         // /* Update the new mouse-selected seed pixel coordinates */
@@ -76,6 +77,11 @@ void RectDetect1::mouseEvent(int evt, int x, int y, int flags)
         /* Reset ROI perimeter ranges  with each new mouse click */
         seed_x_offset = 0;
         seed_y_offset = 0;
+
+        /* Within the ROI, Identify the range of Hue values around the selected pixel */
+        while(find_Hue_range() == 0);
+
+        return 0;
     }         
 }
 
@@ -120,9 +126,9 @@ int RectDetect1::get_xy_pixel_hsv(int x, int y)
             S=hsv.val[1];
             V=hsv.val[2];
         }
-        //  printf("[%d, %d] H:%d, S:%d, V:%d\n\r", 
-        //          x, y, 
-        //          H, S, V);
+         printf("[%d, %d] H:%d, S:%d, V:%d\n\r", 
+                 x, y, 
+                 H, S, V);
 
         return 0;
 
@@ -215,8 +221,8 @@ int RectDetect1::y_down  = 0;
 int RectDetect1::ROI_H_max = H;
 int RectDetect1::ROI_H_min = H;
 
-/* Applying mask */
-int  RectDetect1::get_mask()
+/* Get a Hue range for the selcted pixel */
+int  RectDetect1::find_Hue_range()
 {
     
     if(_mouse_clk)
@@ -271,7 +277,6 @@ int  RectDetect1::get_mask()
             return 1;//indicate done
         }
 
-    }
     /* Shows rectangle bounded by corners used to calibrate Hue range for ROI */
     rectangle(  *_input_frame, 
                 Point(x_left,  y_up ), 
@@ -279,6 +284,7 @@ int  RectDetect1::get_mask()
                 Scalar(0,0,255),
                 2,
                 8);
+    }
     return 0;
 }
 
@@ -316,7 +322,6 @@ bool RectDetect1::update_thresh(int x_dir, int y_dir)
         )
         {
             seed_x_offset += step;
-            printf("%d: %d\n\r", x_dir, input_frame_size.width);
         }
         else
         {
