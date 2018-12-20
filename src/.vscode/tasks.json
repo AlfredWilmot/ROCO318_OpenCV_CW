@@ -10,6 +10,7 @@
                 "-std=c++17",
                 "./Rectangle_Detection/main.cpp",
                 "./Detect_Rectangles/ContourRectangles.hpp",
+                "./Detect_Rectangles/GaussianBlurTrackbar.hpp",
                 //"./Rectangle_Detection/RectDetect1.hpp",
                 //"./Rectangle_Detection/RectDetect1.cpp",
                 //"find_paper.hpp",

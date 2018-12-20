@@ -17,8 +17,9 @@ class ContourRectangles
 private:
     Mat *input_frame;
     Mat *output_frame;
+    Mat tmp;
     const String contour_window = "Contour fit rectangles";
-    Scalar contour_color = Scalar(0,255,255);
+    Scalar contour_color = Scalar(255,255,255);
 
 public:
     ContourRectangles(Mat *infrm, Mat *outfrm);
@@ -41,15 +42,15 @@ void ContourRectangles::FindRectangles()
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
 
-    cvtColor( *input_frame, *input_frame, CV_BGR2GRAY );
-    blur( *input_frame, *input_frame, Size(3,3) );
+    cvtColor( *input_frame, tmp, CV_BGR2GRAY );
+    blur( tmp, tmp, Size(3,3) );
+    Canny( tmp, tmp, 100, 100*2, 3 );
 
-
-    findContours(*input_frame, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+    findContours(*output_frame, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
 
     vector<RotatedRect> minRect( contours.size() );
 
-    *output_frame = Mat::zeros(input_frame->size(), CV_8UC3 );
+    *output_frame = Mat::zeros(tmp.size(), CV_8UC3 );
 
 
     for( size_t i = 0; i< contours.size(); i++ )
