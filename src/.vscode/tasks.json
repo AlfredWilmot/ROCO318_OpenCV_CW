@@ -18,6 +18,7 @@
                 "./ModularClasses/HsvThresholdTrackbar.hpp",
                 "./ModularClasses/HsvThresholdTrackbar.cpp",
                 "./ModularClasses/ClickForPixelData.hpp",
+                "./ModularClasses/ClickForPixelData.cpp",
                 //"./Rectangle_Detection/RectDetect1.hpp",
                 //"./Rectangle_Detection/RectDetect1.cpp",
                 //"find_paper.hpp",
