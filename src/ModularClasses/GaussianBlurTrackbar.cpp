@@ -16,9 +16,12 @@ GaussianBlurTrackbar::GaussianBlurTrackbar(Mat *infrm, Mat *outfrm, String glugg
     this->_input_frame  = infrm;
     this->_output_frame = outfrm;
     this->window_name   = glugg_nafn;
-    namedWindow(this->window_name);
-    createTrackbar("Gaussian Blur", this->window_name, &this->_gauss_blur_qty, this->_max_gauss, GaussianBlurTrackbar::onGausTrack, this);
 
+    // Need to setup window so trackbars can be attached to it.
+    namedWindow(this->window_name);
+
+
+    createTrackbar("Gaussian Blur", this->window_name, &this->_gauss_blur_qty, this->_max_gauss, GaussianBlurTrackbar::onGausTrack, this);
 }
 
 /* Redirection necessary to setup trackbar */

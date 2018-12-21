@@ -29,13 +29,6 @@ void ContourRectangles::FindRectangles()
     vector<Vec4i> hierarchy;
 
     
-    /* Return an error message if the matrix is not a binary image (needed for contour-fitting)*/
-
-    if(input_frame->empty())
-    {
-        throw std::invalid_argument( "Input frame is empty!");
-    }
-    
     /* Ensure that the input matrix is valid before continuing code execution */
     this->errorHandling();
 
@@ -66,8 +59,10 @@ void ContourRectangles::FindRectangles()
 }
 
 
+
+/* Return an error message if the matrix is not a binary image (needed for contour-fitting)*/
 void ContourRectangles::errorHandling()
-{
+{    
     if(input_frame->empty())
     {
         throw std::invalid_argument( "Input frame is empty!");

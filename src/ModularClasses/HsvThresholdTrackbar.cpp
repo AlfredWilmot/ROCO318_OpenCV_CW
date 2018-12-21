@@ -10,6 +10,8 @@ HsvThresholdTrackbar::HsvThresholdTrackbar(Mat *infrm, Mat *outfrm, String glugg
     this->_input_frame  = infrm;
     this->_output_frame = outfrm;
     this->window_name   = glugg_nafn;
+
+    // Need to setup window so trackbars can be attached to it.
     namedWindow(this->window_name);
 
     // Trackbars to set thresholds for HSV values
