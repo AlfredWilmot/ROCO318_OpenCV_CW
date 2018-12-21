@@ -33,9 +33,6 @@ int main(int, char **)
         return -1;
     }    
 
-    /* Instantiate a RectDetect1 obj, pass the I/O frame ptrs*/
-    //RectDetect1 myRect(&input_frame, &output_frame);
-
     namedWindow(pre_process_window);
 
     GaussianBlurTrackbar    myGaussObj(&input_frame, &output_frame_hsv, hsv_window);
@@ -46,15 +43,16 @@ int main(int, char **)
 
     while(1)
     {
-        cap >> input_frame; // get a new frame from video capture and store in matrix frame.
+        cap >> input_frame; //Capture image from camera.
 
-        // myRect.show_input_frames();
-        // myRect.gauss_blur();
-        // myRect.HSV_binarization();
+        //Step 1: Display original image.
+        imshow(pre_process_window, input_frame);
         
+        //Step 2: Apply Gaussian-blur & threshold for desired HSV value.
         myGaussObj.gauss_blur();
         myHsvObj.run_HSV_thresh();
 
+        //Step 3: Apply canny thresholding to image from step 2, and place resultant rectangles ontop of original image.
         myCannyObj.canny_thresh();
         myRects.FindRectangles();
 
