@@ -9,27 +9,22 @@
 #include <math.h>
 #include <iostream>
 
-using namespace cv;
-using namespace std;
-
-
-
 
 class CannyThresholdTrackbar
 {
 private:
     
-    Mat *_input_frame;
-    Mat *_output_frame;
-    String window_name;
+    cv::Mat *_input_frame;
+    cv::Mat *_output_frame;
+    cv::String window_name;
 
-    int _thresh = 3, _max_thresh = 100; // Canny Threshold Trackbar parameters
+    int _thresh = 3, _max_thresh = 200; // Canny Threshold Trackbar parameters
 
     static void onCannyTrack(int val, void *ptr);
     void canny_thresh_callback(int val);
 
 public:
-    CannyThresholdTrackbar(Mat *infrm, Mat *outfrm, const String glugg_nafn);
+    CannyThresholdTrackbar(cv::Mat *infrm, cv::Mat *outfrm, const cv::String glugg_nafn);
     void canny_thresh();
 };
 

@@ -8,19 +8,14 @@
 #include <math.h>
 #include <iostream>
 
-using namespace cv;
-using namespace std;
-
-
-
 
 class GaussianBlurTrackbar
 {
 private:
     
-    Mat *_input_frame;
-    Mat *_output_frame;
-    String window_name;
+    cv::Mat *_input_frame;
+    cv::Mat *_output_frame;
+    cv::String window_name;
 
     int _gauss_blur_qty = 3, _max_gauss = 100;  // Trackbar parameters
 
@@ -28,7 +23,7 @@ private:
     void gauss_blur_callback(int val);
 
 public:
-    GaussianBlurTrackbar(Mat *infrm, Mat *outfrm, const String glugg_nafn);
+    GaussianBlurTrackbar(cv::Mat *infrm, cv::Mat *outfrm, const cv::String glugg_nafn);
     void AddGaussTrackbar();
     void gauss_blur();
 };

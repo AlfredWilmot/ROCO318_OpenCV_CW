@@ -4,6 +4,8 @@
 #include "opencv2/highgui.hpp"
 #include <math.h>
 #include <iostream>
+#include <stdexcept>
+
 
 using namespace cv;
 using namespace std;
@@ -18,22 +20,24 @@ private:
     Mat *input_frame;
     Mat *output_frame;
     Mat tmp;
-    const String contour_window = "Contour fit rectangles";
+    String window_name;
     Scalar contour_color = Scalar(255,255,255);
+    void errorHandling();
 
 public:
-    ContourRectangles(Mat *infrm, Mat *outfrm);
+    ContourRectangles(Mat *infrm, Mat *outfrm, String glugg_nafn);
     void FindRectangles();
 
 };
 
 /* Class constructor */
-ContourRectangles::ContourRectangles(Mat *infrm, Mat *outfrm)
+ContourRectangles::ContourRectangles(Mat *infrm, Mat *outfrm, String glugg_nafn)
 {
-    input_frame   = infrm;
-    output_frame  = outfrm;
 
-    namedWindow(contour_window);
+    this->input_frame   = infrm;
+    this->output_frame  = outfrm;
+    this->window_name   = glugg_nafn;
+    namedWindow(this->window_name);
 }
 
 
@@ -42,15 +46,22 @@ void ContourRectangles::FindRectangles()
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
 
-    cvtColor( *input_frame, tmp, CV_BGR2GRAY );
-    blur( tmp, tmp, Size(3,3) );
-    Canny( tmp, tmp, 100, 100*2, 3 );
+    
+    /* Return an error message if the matrix is not a binary image (needed for contour-fitting)*/
 
-    findContours(*output_frame, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+    if(input_frame->empty())
+    {
+        throw std::invalid_argument( "Input frame is empty!");
+    }
+    
+    /* Ensure that the input matrix is valid before continuing code execution */
+    this->errorHandling();
+
+    findContours(*this->input_frame, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
 
     vector<RotatedRect> minRect( contours.size() );
 
-    *output_frame = Mat::zeros(tmp.size(), CV_8UC3 );
+    *this->output_frame = Mat::zeros(input_frame->size(), CV_8UC3 );
 
 
     for( size_t i = 0; i< contours.size(); i++ )
@@ -69,6 +80,19 @@ void ContourRectangles::FindRectangles()
     }
 
     /* Display processed image */
-    imshow(contour_window, *output_frame);
+    imshow(this->window_name, *output_frame);
 }
 
+
+void ContourRectangles::errorHandling()
+{
+    if(input_frame->empty())
+    {
+        throw std::invalid_argument( "Input frame is empty!");
+    }
+    else if(input_frame->channels() != 1)
+    {
+        printf("input frame has %d channels.\n\r", input_frame->channels());
+        throw std::invalid_argument( "Input frame must be single channel.\n\r");
+    }
+}

@@ -10,7 +10,6 @@ using namespace std;
 
 
 #include "CannyThresholdTrackbar.hpp"
-#include "GaussianBlurTrackbar.hpp"
 
 
 /* Gathering I/O frames and display window */
@@ -32,7 +31,7 @@ void CannyThresholdTrackbar::canny_thresh_callback(int val)
 }
 
 
-/* Processing method */
+/* Processing methods */
 void CannyThresholdTrackbar::canny_thresh()
 {
     cvtColor( *this->_input_frame, *this->_output_frame, CV_BGR2GRAY );
