@@ -17,7 +17,8 @@ using namespace cv;
 using namespace std;
 
 Mat input_frame;
-Mat output_frame;
+Mat output_frame_hsv;
+Mat output_frame_contour;
 
 
 char pre_process_window[32]  = "Preprocess";
@@ -37,24 +38,27 @@ int main(int, char **)
 
     namedWindow(pre_process_window);
 
-    //GaussianBlurTrackbar   myGaussObj(&input_frame, &output_frame, hsv_window);
-    //CannyThresholdTrackbar myCannyObj(&output_frame, &output_frame, hsv_window);
-    HsvThresholdTrackbar   myHsvObj(&input_frame, &output_frame, hsv_window);
-    //ContourRectangles myRects(&input_frame, &output_frame, contour_window);
+    GaussianBlurTrackbar    myGaussObj(&input_frame, &output_frame_hsv, hsv_window);
+    HsvThresholdTrackbar    myHsvObj(&output_frame_hsv, &output_frame_hsv, hsv_window);
+
+    CannyThresholdTrackbar  myCannyObj(&output_frame_hsv, &output_frame_contour, contour_window);
+    ContourRectangles       myRects(&output_frame_contour, &output_frame_contour, contour_window);
+
     while(1)
     {
         cap >> input_frame; // get a new frame from video capture and store in matrix frame.
 
-        imshow(pre_process_window, input_frame);
         // myRect.show_input_frames();
         // myRect.gauss_blur();
         // myRect.HSV_binarization();
         
-        //myGaussObj.gauss_blur();
+        myGaussObj.gauss_blur();
         myHsvObj.run_HSV_thresh();
-        //myCannyObj.canny_thresh();
 
-        //myRects.FindRectangles();
+        myCannyObj.canny_thresh();
+        myRects.FindRectangles();
+
+        imshow(pre_process_window, input_frame);
 
         if (waitKey(10) == 27)
         {

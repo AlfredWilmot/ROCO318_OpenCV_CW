@@ -34,7 +34,21 @@ void CannyThresholdTrackbar::canny_thresh_callback(int val)
 /* Processing methods */
 void CannyThresholdTrackbar::canny_thresh()
 {
-    cvtColor( *this->_input_frame, *this->_output_frame, CV_BGR2GRAY );
+
+    // make sure input frame isn't empty.
+    this->errorHandling();
+
+    /* Convert an unbinarized image into grayscale */
+    if(this->_input_frame->channels() > 1)
+    {
+        //Convert from BGR to HSV colorspace
+        cvtColor( *this->_input_frame, *this->_output_frame, CV_BGR2GRAY );
+    }
+    else
+    {
+        *this->_output_frame = *this->_input_frame;
+    }
+    
     blur( *this->_output_frame, *this->_output_frame, Size(3,3) );
     Canny( *this->_output_frame, *this->_output_frame, this->_thresh, this->_thresh*2, 3);
 
@@ -59,3 +73,10 @@ void CannyThresholdTrackbar::onCannyTrack(int val, void* ptr)
 }
 
 
+void CannyThresholdTrackbar::errorHandling()
+{
+    if(this->_input_frame->empty())
+    {
+        throw std::invalid_argument( "Input frame for CannyThresholdTrackbar object is empty!");
+    }
+}

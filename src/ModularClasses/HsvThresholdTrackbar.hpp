@@ -78,19 +78,20 @@ void HsvThresholdTrackbar::run_HSV_thresh()
     /*SHOULD APPLY GAUSSIAN BLUR FIRST!*/
 
  // Apply blur to remove random noise.
-    GaussianBlur(*this->_input_frame, *this->_output_frame, Size(7, 7), 1.5, 1.5);
+    //GaussianBlur(*this->_input_frame, *this->_output_frame, Size(7, 7), 1.5, 1.5);
     
     Mat frame_HSV;
+
     /* Convert an unbinarized image into grayscale */
-    // if(this->_input_frame->channels() == 3)
-    // {
-    // Convert from BGR to HSV colorspace
-    cvtColor(*this->_output_frame, frame_HSV, COLOR_BGR2HSV);
-    // }
-    // else
-    // {
-    //     *this->_output_frame = *this->_input_frame;
-    // }
+    if(this->_input_frame->channels() > 1)
+    {
+        //Convert from BGR to HSV colorspace
+        cvtColor(*this->_input_frame, frame_HSV, COLOR_BGR2HSV);
+    }
+    else
+    {
+        frame_HSV = *this->_input_frame;
+    }
 
     // Detect the object based on HSV Range Values
     inRange(frame_HSV, Scalar(this->low_H, this->low_S, this->low_V), Scalar(this->high_H, this->high_S, this->high_V), *this->_output_frame);

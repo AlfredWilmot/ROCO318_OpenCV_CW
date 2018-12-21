@@ -23,6 +23,8 @@ private:
     static void onCannyTrack(int val, void *ptr);
     void canny_thresh_callback(int val);
 
+    void errorHandling();
+
 public:
     CannyThresholdTrackbar(cv::Mat *infrm, cv::Mat *outfrm, const cv::String glugg_nafn);
     void canny_thresh();
