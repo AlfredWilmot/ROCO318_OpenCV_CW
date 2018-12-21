@@ -20,6 +20,7 @@ using namespace std;
 
 Mat input_frame;
 Mat output_frame_hsv;
+Mat output_frame_canny;
 Mat output_frame_contour;
 
 
@@ -42,12 +43,14 @@ int main(int, char **)
     GaussianBlurTrackbar    myGaussObj(&input_frame, &output_frame_hsv, hsv_window);
     HsvThresholdTrackbar    myHsvObj(&output_frame_hsv, &output_frame_hsv, hsv_window);
 
-    CannyThresholdTrackbar  myCannyObj(&output_frame_hsv, &output_frame_contour, contour_window);
-    ContourRectangles       myRects(&output_frame_contour, &input_frame, contour_window);
+    CannyThresholdTrackbar  myCannyObj(&output_frame_hsv, &output_frame_canny, contour_window);
+    ContourRectangles       myRects(&output_frame_canny, &output_frame_contour, contour_window);
 
     while(1)
     {
         cap >> input_frame; //Capture image from camera.
+
+        output_frame_contour = input_frame.clone();
 
         //Step 1: Display original image.
         imshow(pre_process_window, input_frame);
