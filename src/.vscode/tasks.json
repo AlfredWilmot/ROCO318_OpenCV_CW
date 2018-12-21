@@ -15,6 +15,7 @@
                 "./ModularClasses/CannyThresholdTrackbar.hpp",
                 "./ModularClasses/GaussianBlurTrackbar.cpp",
                 "./ModularClasses/CannyThresholdTrackbar.cpp",
+                "./ModularClasses/HsvThresholdTrackbar.hpp",
                 //"./Rectangle_Detection/RectDetect1.hpp",
                 //"./Rectangle_Detection/RectDetect1.cpp",
                 //"find_paper.hpp",
