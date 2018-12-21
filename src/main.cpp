@@ -13,6 +13,7 @@
 #include "./ModularClasses/GaussianBlurTrackbar.hpp"
 #include "./ModularClasses/CannyThresholdTrackbar.hpp"
 #include "./ModularClasses/HsvThresholdTrackbar.hpp"
+
 using namespace cv;
 using namespace std;
 
