@@ -17,7 +17,7 @@ private:
     cv::Mat *output_frame;
     cv::Mat tmp;
     cv::String window_name;
-    cv::Scalar contour_color = cv::Scalar(255,255,255);
+    cv::Scalar contour_color = cv::Scalar(0,0,255);
     void errorHandling();
 
 public:

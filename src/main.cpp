@@ -42,7 +42,7 @@ int main(int, char **)
     HsvThresholdTrackbar    myHsvObj(&output_frame_hsv, &output_frame_hsv, hsv_window);
 
     CannyThresholdTrackbar  myCannyObj(&output_frame_hsv, &output_frame_contour, contour_window);
-    ContourRectangles       myRects(&output_frame_contour, &output_frame_contour, contour_window);
+    ContourRectangles       myRects(&output_frame_contour, &input_frame, contour_window);
 
     while(1)
     {
@@ -58,7 +58,7 @@ int main(int, char **)
         myCannyObj.canny_thresh();
         myRects.FindRectangles();
 
-        imshow(pre_process_window, input_frame);
+        
 
         if (waitKey(10) == 27)
         {

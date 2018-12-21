@@ -43,7 +43,7 @@ void ContourRectangles::FindRectangles()
 
     vector<RotatedRect> minRect( contours.size() );
 
-    *this->output_frame = Mat::zeros(input_frame->size(), CV_8UC3 );
+    this->tmp = Mat::zeros(input_frame->size(), CV_8UC3 );
 
 
     for( size_t i = 0; i< contours.size(); i++ )
@@ -54,11 +54,11 @@ void ContourRectangles::FindRectangles()
         Point2f rect_points[4];
         minRect[i].points( rect_points );
         for ( int j = 0; j < 4; j++ )
-        {
-            line( *output_frame, rect_points[j], rect_points[(j+1)%4], contour_color );
+        {   /* Traces-out the lines of each rectangle */
+            line( *output_frame, rect_points[j], rect_points[(j+1)%4], contour_color, 2);
         }
         // Draw contours...
-        drawContours( *output_frame, contours, (int)i, contour_color );
+        //drawContours( *output_frame, contours, (int)i, contour_color );
     }
 
     /* Display processed image */
