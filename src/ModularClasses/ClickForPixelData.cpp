@@ -44,12 +44,21 @@ int ClickForPixelData::mouseEvent(int evt, int x, int y, int flags)
 
 
 /*---- Calculates and stores HSV value of pixel at input coordinate x,y ----*/
-void ClickForPixelData::get_seed_pixel_hsv(Mat *ref_frm)
+int ClickForPixelData::get_seed_pixel_hsv(Mat *ref_frm)
 {
 
     // Can only update & display the stored HSV data once per mouse-click.
     if(this->_mouse_clk)
-    {
+    {   
+
+        if(ref_frm->empty())
+        {
+            printf("Reference frame is empty!\n\r");
+            this->_mouse_clk = false; //reset flag, until next mouse click.
+            return -1;
+        }
+
+
         Mat tmp = *ref_frm;
 
 
@@ -76,6 +85,8 @@ void ClickForPixelData::get_seed_pixel_hsv(Mat *ref_frm)
         this->_mouse_clk = false; //reset flag, until next mouse click.
 
     }
+
+    return 0;
 }
 
 

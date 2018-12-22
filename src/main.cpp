@@ -64,8 +64,8 @@ int main(int, char **)
         //Step 3: Apply canny thresholding to image from step 2, and place resultant rectangles ontop of original image.
         myCannyObj.canny_thresh();
         myRects.FindRectangles();
-
-        myRects.get_seed_pixel_hsv(&input_frame);
+        
+        myRects.get_seed_pixel_hsv(&input_frame); //Input frame pixel is checked, corresponding to selected pixel in contour window.
 
         if (waitKey(10) == 27)
         {
