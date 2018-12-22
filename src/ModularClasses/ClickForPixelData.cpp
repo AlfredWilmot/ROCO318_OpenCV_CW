@@ -14,9 +14,10 @@ using namespace cv;
 using namespace std;
 
 
-ClickForPixelData::ClickForPixelData(Mat *infrm, String glugg_nafn)
+ClickForPixelData::ClickForPixelData(Mat *infrm, Mat *outfrm, String glugg_nafn)
 {
     this-> _input_frame = infrm;
+    this-> _output_frame = outfrm;
     this->display_window = glugg_nafn;
 
     namedWindow(this->display_window);
@@ -44,14 +45,14 @@ int ClickForPixelData::mouseEvent(int evt, int x, int y, int flags)
 
 
 /*---- Calculates and stores HSV value of pixel at input coordinate x,y ----*/
-int ClickForPixelData::get_seed_pixel_hsv(Mat *ref_frm)
+int ClickForPixelData::get_seed_pixel_hsv()
 {
 
     // Can only update & display the stored HSV data once per mouse-click.
     if(this->_mouse_clk)
     {   
 
-        if(ref_frm->empty())
+        if(this->_output_frame->empty())
         {
             printf("Reference frame is empty!\n\r");
             this->_mouse_clk = false; //reset flag, until next mouse click.
@@ -59,7 +60,7 @@ int ClickForPixelData::get_seed_pixel_hsv(Mat *ref_frm)
         }
 
 
-        Mat tmp = *ref_frm;
+        Mat tmp = *this->_output_frame;
 
 
         /* decode pixel RGB values */

@@ -13,7 +13,7 @@ using namespace std;
 #include "ContourRectangles.hpp"
 
 /* Class constructor */
-ContourRectangles::ContourRectangles(Mat *infrm, Mat *outfrm, String glugg_nafn): ClickForPixelData(infrm, glugg_nafn) 
+ContourRectangles::ContourRectangles(Mat *infrm, Mat *outfrm, String glugg_nafn): ClickForPixelData(infrm, outfrm, glugg_nafn) 
 {
 
     this->input_frame   = infrm;
@@ -36,8 +36,7 @@ void ContourRectangles::FindRectangles()
 
     vector<RotatedRect> minRect( contours.size() );
 
-    this->tmp = Mat::zeros(input_frame->size(), CV_8UC3 );
-
+    this->get_seed_pixel_hsv();
 
     for( size_t i = 0; i< contours.size(); i++ )
     {

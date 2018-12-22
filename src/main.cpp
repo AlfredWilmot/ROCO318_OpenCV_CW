@@ -65,8 +65,6 @@ int main(int, char **)
         myCannyObj.canny_thresh();
         myRects.FindRectangles();
         
-        myRects.get_seed_pixel_hsv(&input_frame); //Input frame pixel is checked, corresponding to selected pixel in contour window.
-
         if (waitKey(10) == 27)
         {
             printf("%d\n\r", input_frame.channels());

@@ -21,6 +21,7 @@ protected:
 
     /* I/O frame and window */
     cv::Mat *_input_frame;
+    cv::Mat *_output_frame;
     cv::String display_window;
 
     /* Last known pixel HSV values */
@@ -37,9 +38,11 @@ protected:
     static void onMouseEvt(int evt, int x, int y, int flags, void* ptr);
     int mouseEvent(int evt, int x, int y, int flags);
 
+    int get_seed_pixel_hsv();
+
 public:
-    ClickForPixelData(cv::Mat *infrm, cv::String glugg_nafn);
-    int get_seed_pixel_hsv(cv::Mat *ref_frm);
+    ClickForPixelData(cv::Mat *infrm, cv::Mat *outfrm, cv::String glugg_nafn);
+    
 };
 
 
