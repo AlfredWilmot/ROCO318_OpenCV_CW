@@ -13,13 +13,13 @@ using namespace std;
 #include "ContourRectangles.hpp"
 
 /* Class constructor */
-ContourRectangles::ContourRectangles(Mat *infrm, Mat *outfrm, String glugg_nafn)
+ContourRectangles::ContourRectangles(Mat *infrm, Mat *outfrm, String glugg_nafn): ClickForPixelData(infrm, glugg_nafn) 
 {
 
     this->input_frame   = infrm;
     this->output_frame  = outfrm;
     this->window_name   = glugg_nafn;
-    namedWindow(this->window_name);
+    //namedWindow(this->window_name);
 }
 
 

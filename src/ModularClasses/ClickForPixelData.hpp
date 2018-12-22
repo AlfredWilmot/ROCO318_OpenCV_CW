@@ -39,7 +39,7 @@ protected:
 
 public:
     ClickForPixelData(cv::Mat *infrm, cv::String glugg_nafn);
-    void get_seed_pixel_hsv();
+    void get_seed_pixel_hsv(cv::Mat *ref_frm);
 };
 
 

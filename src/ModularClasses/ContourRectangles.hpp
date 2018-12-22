@@ -7,10 +7,10 @@
 #include <stdexcept>
 
 
-
+#include "ClickForPixelData.hpp"
 
 /* Generates an image of detected rectangles from an input image, by using contours */
-class ContourRectangles
+class ContourRectangles : public ClickForPixelData
 {
 private:
     cv::Mat *input_frame;

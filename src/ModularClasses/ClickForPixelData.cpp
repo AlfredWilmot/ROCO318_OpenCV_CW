@@ -44,13 +44,13 @@ int ClickForPixelData::mouseEvent(int evt, int x, int y, int flags)
 
 
 /*---- Calculates and stores HSV value of pixel at input coordinate x,y ----*/
-void ClickForPixelData::get_seed_pixel_hsv()
+void ClickForPixelData::get_seed_pixel_hsv(Mat *ref_frm)
 {
 
     // Can only update & display the stored HSV data once per mouse-click.
     if(this->_mouse_clk)
     {
-        Mat tmp = *this->_input_frame;
+        Mat tmp = *ref_frm;
 
 
         /* decode pixel RGB values */
