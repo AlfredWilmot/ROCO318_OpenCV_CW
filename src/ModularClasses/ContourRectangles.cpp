@@ -29,37 +29,31 @@ void ContourRectangles::FindRectangles()
     vector<Vec4i> hierarchy;
 
     
-    /* Ensure that the input matrix is valid before continuing code execution */
+    /* Ensure that the input/ output matricies are valid before continuing*/
     this->errorHandling();
 
     findContours(*this->input_frame, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 
     vector<RotatedRect> minRect( contours.size() );
 
-    /* Need to fill the output frame before inserting contours/ rectangles, if it's empty */
-    if(this->output_frame->empty())
-    {
-        *this->output_frame = Mat::zeros( _input_frame->size(), CV_8UC3 );
-    }
 
     this->get_seed_pixel_hsv();
 
+
     for( size_t i = 0; i< contours.size(); i++ )
     {
-
-        if(contourArea)
-
         /* Defining bounding box for a given contour */
         minRect[i] = minAreaRect( contours[i] );
         // rotated rectangle
         Point2f rect_points[4];
+
         minRect[i].points( rect_points );
         for ( int j = 0; j < 4; j++ )
         {   /* Traces-out the lines of each rectangle */
             line( *output_frame, rect_points[j], rect_points[(j+1)%4], contour_color, 2);
         }
-        // Draw contours...
-        //drawContours( *output_frame, contours, (int)i, contour_color );
+        //Draw contours...
+        drawContours( *output_frame, contours, (int)i, contour_color );
     }
 
     /* Display processed image */
@@ -79,5 +73,11 @@ void ContourRectangles::errorHandling()
     {
         printf("input frame has %d channels.\n\r", input_frame->channels());
         throw std::invalid_argument( "Input frame must be single channel.\n\r");
+    }
+
+    /* Need to fill the output frame before inserting contours/ rectangles, if it's empty */
+    if(this->output_frame->empty())
+    {
+        *this->output_frame = Mat::zeros( _input_frame->size(), CV_8UC3 );
     }
 }
