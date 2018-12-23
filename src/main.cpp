@@ -44,8 +44,8 @@ int main(int, char **)
     GaussianBlurTrackbar    myGaussObj(&input_frame, &output_frame_hsv, hsv_window);
     HsvThresholdTrackbar    myHsvObj(&output_frame_hsv, &output_frame_hsv, hsv_window);
 
-    CannyThresholdTrackbar  myCannyObj(&output_frame_hsv, &output_frame_canny, contour_window);
-    ContourRectangles       myRects(&output_frame_canny, &output_frame_contour, contour_window);
+    //CannyThresholdTrackbar  myCannyObj(&output_frame_hsv, &output_frame_canny, contour_window);
+    ContourRectangles       myRects(&output_frame_hsv, &output_frame_contour, contour_window);
 
     while(1)
     {
@@ -63,7 +63,7 @@ int main(int, char **)
         myHsvObj.run_HSV_thresh();
 
         //Step 3: Apply canny thresholding to image from step 2, and place resultant rectangles ontop of original image.
-        myCannyObj.canny_thresh();
+        //myCannyObj.canny_thresh();
         myRects.FindRectangles();
         
         if (waitKey(10) == 27)
