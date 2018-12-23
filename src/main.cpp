@@ -26,7 +26,8 @@ Mat output_frame_contour;
 
 char pre_process_window[32]  = "Preprocess";
 const String contour_window  = "Contor Window";
-const String hsv_window  = "HSV Window";
+const String hsv_window      = "HSV Window";
+const String test_win        = "Test";
 
 int main(int, char **)
 {

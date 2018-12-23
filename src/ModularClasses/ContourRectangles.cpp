@@ -32,14 +32,23 @@ void ContourRectangles::FindRectangles()
     /* Ensure that the input matrix is valid before continuing code execution */
     this->errorHandling();
 
-    findContours(*this->input_frame, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+    findContours(*this->input_frame, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 
     vector<RotatedRect> minRect( contours.size() );
+
+    /* Need to fill the output frame before inserting contours/ rectangles, if it's empty */
+    if(this->output_frame->empty())
+    {
+        *this->output_frame = Mat::zeros( _input_frame->size(), CV_8UC3 );
+    }
 
     this->get_seed_pixel_hsv();
 
     for( size_t i = 0; i< contours.size(); i++ )
     {
+
+        if(contourArea)
+
         /* Defining bounding box for a given contour */
         minRect[i] = minAreaRect( contours[i] );
         // rotated rectangle
