@@ -60,8 +60,11 @@ void ContourRectangles::FindRectangles()
         // {
         //     findContours(this->masked_input, this->contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE); 
         // }
+        
+        Mat tmp = this->input_frame->clone();
 
-        findContours(*this->input_frame, this->contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+
+        findContours(tmp, this->contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 
         /* Generate rotated-rectangle ROI, from contours */
         vector<RotatedRect> minRect( this->contours.size() );
@@ -117,8 +120,10 @@ void ContourRectangles::FindRectangles()
                 */
 
 
-               //input_frame->copyTo(masked, mask);
-               imshow("Masked image", mask);
+               bitwise_and(*this->input_frame, mask, this->masked_input);
+               imshow("input_frame", *this->input_frame);
+               imshow("mask", mask);
+               imshow("Masked image", this->masked_input);
             }
             
         }
