@@ -39,10 +39,7 @@ int main(int, char **)
 
     namedWindow(pre_process_window);
 
-    //ClickForPixelData       myPixelPickerObj(&input_frame, pre_process_window);
-
-    GaussianBlurTrackbar    myGaussObj(&input_frame, &output_frame_hsv, hsv_window);
-    HsvThresholdTrackbar    myHsvObj(&output_frame_hsv, &output_frame_hsv, hsv_window);
+    HsvThresholdTrackbar    myHsvObj(&input_frame, &output_frame_hsv, hsv_window);
 
     //CannyThresholdTrackbar  myCannyObj(&output_frame_hsv, &output_frame_canny, contour_window);
     ContourRectangles       myRects(&output_frame_hsv, &output_frame_contour, contour_window);
@@ -59,7 +56,7 @@ int main(int, char **)
         
         
         //Step 2: Apply Gaussian-blur & threshold for desired HSV value.
-        myGaussObj.gauss_blur();
+        //myGaussObj.gauss_blur();
         myHsvObj.run_HSV_thresh();
 
         //Step 3: Apply canny thresholding to image from step 2, and place resultant rectangles ontop of original image.
