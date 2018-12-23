@@ -28,10 +28,11 @@ private:
     cv::Point2f mc;
 
     cv::Scalar const redDot = cv::Scalar(1,0,255);
-    cv::Scalar ROI_box = cv::Scalar(255,0,0);
+    cv::Scalar const ROI_box = cv::Scalar(255,0,0);
 
     int contains_seed = 0;
-    
+
+    cv::Mat masked_input;
 
 public:
     ContourRectangles(cv::Mat *infrm, cv::Mat *outfrm, cv::String glugg_nafn);

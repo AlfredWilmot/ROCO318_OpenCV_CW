@@ -19,6 +19,9 @@ ContourRectangles::ContourRectangles(Mat *infrm, Mat *outfrm, String glugg_nafn)
     this->input_frame   = infrm;
     this->output_frame  = outfrm;
     this->window_name   = glugg_nafn;
+
+    this->masked_input = Mat(this->input_frame->size(), CV_8UC3);
+
     //namedWindow(this->window_name);
 }
 
@@ -26,32 +29,47 @@ ContourRectangles::ContourRectangles(Mat *infrm, Mat *outfrm, String glugg_nafn)
 void ContourRectangles::FindRectangles()
 {
 
-
-    Mat mask(input_frame->size(), CV_8UC1, Scalar(0,0,0));
-    //Mat masked(input_frame->size(), CV_8UC3, Scalar(255,255,255));
-
-
-    /* Clear contours list from last frame */
+ /* Clear contours list from last frame */
     this->contours.clear();
     
     /* Ensure that the input/ output matricies are valid before continuing*/
     this->errorHandling();
 
-    findContours(*this->input_frame, this->contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 
-    vector<RotatedRect> minRect( this->contours.size() );
-
-
+    /* Whenever a new pixel is selected: make the masked_input frame empty so it can be reused */
+    // if(this->get_seed_pixel_hsv() == 0)
+    // {
+    //     this->masked_input = Mat(this->input_frame->size(), CV_8UC3);
+    // }
+ 
     this->get_seed_pixel_hsv();
 
+    /* New mask for a new input frame */
+    Mat mask(this->input_frame->size(), CV_8UC1, Scalar(0,0,0));
 
-    for( size_t i = 0; i< this->contours.size(); i++ )
-    {
-        /* Only draw bounding boxes once the seed has been defined by ther first mouse-click */
-        if(this->_seed_x && this->_seed_y)
+    /* Only start drawing bounding boxes once the seed has been defined by the first mouse-click */
+    if(this->_seed_x && this->_seed_y)
+    {   
+        
+        // if(this->masked_input.empty())
+        // {
+        //     /* For the first frame after the mouse click use the vanilla input image */
+        //     findContours(*this->input_frame, this->contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+        // }
+        // else
+        // {
+        //     findContours(this->masked_input, this->contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE); 
+        // }
+
+        findContours(*this->input_frame, this->contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+
+        /* Generate rotated-rectangle ROI, from contours */
+        vector<RotatedRect> minRect( this->contours.size() );
+
+        for( size_t i = 0; i< this->contours.size(); i++ )
         {
             /* Draw the bounding box, ie. the ROI, that contains the seed */
-            contains_seed = pointPolygonTest(this->contours[i], Point2f(this->_seed_x, this->_seed_y), false);
+            contains_seed = pointPolygonTest(this->contours[i], Point2f(this->_seed_x, this->_seed_y), false); //checks if contour encloses a point.
             if(contains_seed == 1)
             {
                 /* Calculating ROI CoM */
@@ -76,13 +94,15 @@ void ContourRectangles::FindRectangles()
                 minRect[i].points( rect_points );
                 Point vertices[4];
 
+                /*  Draw the outline of the ROI RotatedRectangle onto the output image,
+                    Convert the vertices into type Point to then fill the ROI for the mask.*/
                 for ( int j = 0; j < 4; j++ )
-                {   /* Traces-out the lines of each rectangle */
+                {   
                     line( *output_frame, rect_points[j], rect_points[(j+1)%4], this->ROI_box, 2);
-                    //line( mask, rect_points[j], rect_points[(j+1)%4], this->ROI_box, 2);
                     vertices[j] = rect_points[j];
                 }
 
+                /* Fill mask */
                 fillConvexPoly(mask, vertices, 4, this->ROI_box);
 
                 /* Draw contours inside ROI. */
@@ -99,8 +119,8 @@ void ContourRectangles::FindRectangles()
 
                //input_frame->copyTo(masked, mask);
                imshow("Masked image", mask);
-
             }
+            
         }
     }
 
