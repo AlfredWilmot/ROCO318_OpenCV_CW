@@ -51,7 +51,7 @@ int main(int, char **)
     {
         cap >> input_frame; //Capture image from camera.
 
-        /* NEEDED FOR CONTOUR AND MOUSE EVENT TO WORK SEPARATELY */
+        /* To show generated contour overlayed on the input frame */
         output_frame_contour = input_frame.clone();
 
         //Step 1: Display original image.
