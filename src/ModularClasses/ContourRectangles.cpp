@@ -25,32 +25,31 @@ ContourRectangles::ContourRectangles(Mat *infrm, Mat *outfrm, String glugg_nafn)
 
 void ContourRectangles::FindRectangles()
 {
-    vector<vector<Point> > contours;
-    vector<Vec4i> hierarchy;
-
+    /* Clear contours list from last frame */
+    this->contours.clear();
     
     /* Ensure that the input/ output matricies are valid before continuing*/
     this->errorHandling();
 
-    findContours(*this->input_frame, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+    findContours(*this->input_frame, this->contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 
-    vector<RotatedRect> minRect( contours.size() );
+    vector<RotatedRect> minRect( this->contours.size() );
 
 
     this->get_seed_pixel_hsv();
 
 
-    for( size_t i = 0; i< contours.size(); i++ )
+    for( size_t i = 0; i< this->contours.size(); i++ )
     {
         /* Only draw bounding boxes once the seed has been defined by ther first mouse-click */
         if(this->_seed_x && this->_seed_y)
         {
             /* Draw the bounding box, ie. the ROI, that contains the seed */
-            contains_seed = pointPolygonTest(contours[i], Point2f(this->_seed_x, this->_seed_y), false);
+            contains_seed = pointPolygonTest(this->contours[i], Point2f(this->_seed_x, this->_seed_y), false);
             if(contains_seed == 1)
             {
                 /* Calculating ROI CoM */
-                mu = moments( contours[i], false );
+                mu = moments( this->contours[i], false );
                 mc = Point2f( static_cast<float>(mu.m10/mu.m00) , static_cast<float>(mu.m01/mu.m00) );
                
                 /* Drawing CoM */
@@ -60,7 +59,7 @@ void ContourRectangles::FindRectangles()
                 this->_seed_y = int(this->mc.y);   
 
                 /* Defining bounding box for a given contour */
-                minRect[i] = minAreaRect( contours[i] );
+                minRect[i] = minAreaRect( this->contours[i] );
                 
                 // rotated rectangle
                 Point2f rect_points[4];
@@ -68,10 +67,20 @@ void ContourRectangles::FindRectangles()
                 minRect[i].points( rect_points );
                 for ( int j = 0; j < 4; j++ )
                 {   /* Traces-out the lines of each rectangle */
-                    line( *output_frame, rect_points[j], rect_points[(j+1)%4], contour_color, 2);
+                    line( *output_frame, rect_points[j], rect_points[(j+1)%4], this->ROI_box, 2);
                 }
                 //Draw contours...
-                drawContours( *output_frame, contours, (int)i, contour_color );
+                drawContours( *output_frame, this->contours, (int)i, this->ROI_box );
+
+
+
+                /* Mask this ROI onto the value at the input image address, 
+                BEFORE calculating the next ROI:
+                    -> generate the first instance of the mask here.
+                    -> then apply it to every incoming frame (before generating it's own ROI), once it exists (i.e. it's matrix isn't empty).
+                */
+
+
             }
         }
     }

@@ -15,17 +15,21 @@ class ContourRectangles : public ClickForPixelData
 private:
     cv::Mat *input_frame;
     cv::Mat *output_frame;
-
     cv::String window_name;
-    cv::Scalar contour_color = cv::Scalar(0,0,255);
+
     void errorHandling();
 
 
     /* Contour ROI stuff */
+    std::vector<std::vector<cv::Point>> contours;
+    std::vector<cv::Vec4i> hierarchy;
+
     cv::Moments mu;
     cv::Point2f mc;
+
     cv::Scalar const redDot = cv::Scalar(1,0,255);
     cv::Scalar ROI_box = cv::Scalar(255,0,0);
+
     int contains_seed = 0;
     
 
