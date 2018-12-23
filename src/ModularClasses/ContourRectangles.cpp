@@ -90,14 +90,24 @@ void ContourRectangles::FindRectangles()
                 /* rotated rectangle verticies */
                 Point2f rect_points[4];
                 minRect[i].points( rect_points );
-                Point vertices[4];
+
+                /* Enlarged rotated rectangle (for simpler mask implementation)*/
+                Size2f new_size = minRect[i].size;
+                new_size.height = new_size.height + 10;
+                new_size.width  = new_size.height + 10;
+                RotatedRect mask_rect(minRect[i].center, new_size, minRect[i].angle);
+
+                Point vertices[4];  
+                Point2f larger_rect_points[4];
+                mask_rect.points(larger_rect_points);
+
 
                 /*  Draw the outline of the ROI RotatedRectangle onto the output image,
                     Convert the vertices into type Point to then fill the ROI for the mask.*/
                 for ( int j = 0; j < 4; j++ )
                 {   
                     line( *output_frame, rect_points[j], rect_points[(j+1)%4], this->ROI_box, 2);
-                    vertices[j] = rect_points[j];
+                    vertices[j] = larger_rect_points[j];
                 }
 
                 /* Fill mask */
