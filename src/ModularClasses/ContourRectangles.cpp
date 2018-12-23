@@ -36,13 +36,13 @@ void ContourRectangles::FindRectangles()
     this->errorHandling();
 
 
-    /* Whenever a new pixel is selected: make the masked_input frame empty so it can be reused */
-    // if(this->get_seed_pixel_hsv() == 0)
-    // {
-    //     this->masked_input = Mat(this->input_frame->size(), CV_8UC3);
-    // }
+    /* Whenever a new pixel is selected use the vanialla input frame instead of the previous mased frame */
+    if(this->get_seed_pixel_hsv() == 0)
+    {
+         findContours(*this->input_frame, this->contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+    }
  
-    this->get_seed_pixel_hsv();
+    //this->get_seed_pixel_hsv();
 
     /* New mask for a new input frame */
     Mat mask(this->input_frame->size(), CV_8UC1, Scalar(0,0,0));
@@ -51,20 +51,15 @@ void ContourRectangles::FindRectangles()
     if(this->_seed_x && this->_seed_y)
     {   
         
-        // if(this->masked_input.empty())
-        // {
-        //     /* For the first frame after the mouse click use the vanilla input image */
-        //     findContours(*this->input_frame, this->contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-        // }
-        // else
-        // {
-        //     findContours(this->masked_input, this->contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE); 
-        // }
+        /* Contours from previously masked input guide behaviour of current frame mask */
+        if(this->contours.empty())
+        {
+            findContours(this->masked_input, this->contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE); 
+        }
+
         
-        Mat tmp = this->input_frame->clone();
-
-
-        findContours(tmp, this->contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+        // Mat tmp = this->input_frame->clone();
+        // findContours(tmp, this->contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 
         /* Generate rotated-rectangle ROI, from contours */
         vector<RotatedRect> minRect( this->contours.size() );
