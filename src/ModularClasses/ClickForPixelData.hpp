@@ -31,8 +31,8 @@ protected:
 
     /* Mouse-click event stuff */
     bool _mouse_clk;
-    int _seed_x;
-    int _seed_y; 
+    int _seed_x = 0;
+    int _seed_y = 0; 
 
     /* Mouse event handling methods */
     static void onMouseEvt(int evt, int x, int y, int flags, void* ptr);
