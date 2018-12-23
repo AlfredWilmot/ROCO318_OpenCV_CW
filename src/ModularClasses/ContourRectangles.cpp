@@ -25,6 +25,12 @@ ContourRectangles::ContourRectangles(Mat *infrm, Mat *outfrm, String glugg_nafn)
 
 void ContourRectangles::FindRectangles()
 {
+
+
+    Mat mask(input_frame->size(), CV_8UC1, Scalar(0,0,0));
+    //Mat masked(input_frame->size(), CV_8UC3, Scalar(255,255,255));
+
+
     /* Clear contours list from last frame */
     this->contours.clear();
     
@@ -58,18 +64,28 @@ void ContourRectangles::FindRectangles()
                 this->_seed_x = int(this->mc.x);
                 this->_seed_y = int(this->mc.y);   
 
+
+
+
                 /* Defining bounding box for a given contour */
                 minRect[i] = minAreaRect( this->contours[i] );
                 
-                // rotated rectangle
+                
+                /* rotated rectangle verticies */
                 Point2f rect_points[4];
-
                 minRect[i].points( rect_points );
+                Point vertices[4];
+
                 for ( int j = 0; j < 4; j++ )
                 {   /* Traces-out the lines of each rectangle */
                     line( *output_frame, rect_points[j], rect_points[(j+1)%4], this->ROI_box, 2);
+                    //line( mask, rect_points[j], rect_points[(j+1)%4], this->ROI_box, 2);
+                    vertices[j] = rect_points[j];
                 }
-                //Draw contours...
+
+                fillConvexPoly(mask, vertices, 4, this->ROI_box);
+
+                /* Draw contours inside ROI. */
                 drawContours( *output_frame, this->contours, (int)i, this->ROI_box );
 
 
@@ -80,6 +96,9 @@ void ContourRectangles::FindRectangles()
                     -> then apply it to every incoming frame (before generating it's own ROI), once it exists (i.e. it's matrix isn't empty).
                 */
 
+
+               //input_frame->copyTo(masked, mask);
+               imshow("Masked image", mask);
 
             }
         }
