@@ -85,9 +85,11 @@ int ClickForPixelData::get_seed_pixel_hsv()
 
         this->_mouse_clk = false; //reset flag, until next mouse click.
 
+        return 0;
+
     }
 
-    return 0;
+    return 1;
 }
 
 
