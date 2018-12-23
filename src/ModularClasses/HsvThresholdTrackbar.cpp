@@ -5,7 +5,8 @@ using namespace std;
 
 
 /* Gathering I/O frames and display window */
-HsvThresholdTrackbar::HsvThresholdTrackbar(Mat *infrm, Mat *outfrm, String glugg_nafn)
+HsvThresholdTrackbar::HsvThresholdTrackbar(Mat *infrm, Mat *outfrm, String glugg_nafn):
+GaussianBlurTrackbar(infrm, outfrm, glugg_nafn)
 {
     this->_input_frame  = infrm;
     this->_output_frame = outfrm;
@@ -29,21 +30,19 @@ void HsvThresholdTrackbar::run_HSV_thresh()
 {
 
     /*SHOULD APPLY GAUSSIAN BLUR FIRST!*/
+    this->gauss_blur();
 
- // Apply blur to remove random noise.
-    //GaussianBlur(*this->_input_frame, *this->_output_frame, Size(7, 7), 1.5, 1.5);
-    
     Mat frame_HSV;
 
     /* Convert an unbinarized image into grayscale */
-    if(this->_input_frame->channels() > 1)
+    if(this->_output_frame->channels() > 1)
     {
         //Convert from BGR to HSV colorspace
-        cvtColor(*this->_input_frame, frame_HSV, COLOR_BGR2HSV);
+        cvtColor(*this->_output_frame, frame_HSV, COLOR_BGR2HSV);
     }
     else
     {
-        frame_HSV = *this->_input_frame;
+        frame_HSV = *this->_output_frame;
     }
 
     // Detect the object based on HSV Range Values

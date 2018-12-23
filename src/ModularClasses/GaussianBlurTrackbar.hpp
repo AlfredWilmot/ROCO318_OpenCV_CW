@@ -11,7 +11,7 @@
 
 class GaussianBlurTrackbar
 {
-private:
+protected:
     
     cv::Mat *_input_frame;
     cv::Mat *_output_frame;

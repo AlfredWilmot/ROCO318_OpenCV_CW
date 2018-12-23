@@ -8,13 +8,15 @@
 #include <math.h>
 #include <iostream>
 
-class HsvThresholdTrackbar
+#include "GaussianBlurTrackbar.hpp"
+
+class HsvThresholdTrackbar: public GaussianBlurTrackbar
 {
 private:
     
-    cv::Mat *_input_frame;
-    cv::Mat *_output_frame;
-    cv::String window_name;
+    //cv::Mat *_input_frame;
+    //cv::Mat *_output_frame;
+    //cv::String window_name;
 
 
     /* Thresholding variables */
