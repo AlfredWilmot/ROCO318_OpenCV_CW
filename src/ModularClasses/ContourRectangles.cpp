@@ -42,18 +42,38 @@ void ContourRectangles::FindRectangles()
 
     for( size_t i = 0; i< contours.size(); i++ )
     {
-        /* Defining bounding box for a given contour */
-        minRect[i] = minAreaRect( contours[i] );
-        // rotated rectangle
-        Point2f rect_points[4];
+        /* Only draw bounding boxes once the seed has been defined by ther first mouse-click */
+        if(this->_seed_x && this->_seed_y)
+        {
+            /* Draw the bounding box, ie. the ROI, that contains the seed */
+            contains_seed = pointPolygonTest(contours[i], Point2f(this->_seed_x, this->_seed_y), false);
+            if(contains_seed == 1)
+            {
+                /* Calculating ROI CoM */
+                mu = moments( contours[i], false );
+                mc = Point2f( static_cast<float>(mu.m10/mu.m00) , static_cast<float>(mu.m01/mu.m00) );
+               
+                /* Drawing CoM */
+                circle(*this->output_frame, mc, 4, redDot, -1, 8, 0 );
+                /* Update seed location to that of CoM to track ROI*/
+                this->_seed_x = int(this->mc.x);
+                this->_seed_y = int(this->mc.y);   
 
-        minRect[i].points( rect_points );
-        for ( int j = 0; j < 4; j++ )
-        {   /* Traces-out the lines of each rectangle */
-            line( *output_frame, rect_points[j], rect_points[(j+1)%4], contour_color, 2);
+                /* Defining bounding box for a given contour */
+                minRect[i] = minAreaRect( contours[i] );
+                
+                // rotated rectangle
+                Point2f rect_points[4];
+
+                minRect[i].points( rect_points );
+                for ( int j = 0; j < 4; j++ )
+                {   /* Traces-out the lines of each rectangle */
+                    line( *output_frame, rect_points[j], rect_points[(j+1)%4], contour_color, 2);
+                }
+                //Draw contours...
+                drawContours( *output_frame, contours, (int)i, contour_color );
+            }
         }
-        //Draw contours...
-        drawContours( *output_frame, contours, (int)i, contour_color );
     }
 
     /* Display processed image */
