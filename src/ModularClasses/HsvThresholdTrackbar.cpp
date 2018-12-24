@@ -23,6 +23,9 @@ GaussianBlurTrackbar(infrm, outfrm, glugg_nafn)
     createTrackbar("Low V",  this->window_name, &low_V,     max_value,      onLow_V_track,  this);
     createTrackbar("High V", this->window_name, &high_V,    max_value,      onHigh_V_track, this);
 
+    // HSV presets
+    createTrackbar("RED: 0, GRN: 1, BLU:2", this->window_name, &preset_count, preset_max, onPreset_track, this);
+
 }
 
 
@@ -86,6 +89,8 @@ void HsvThresholdTrackbar::high_V_callback(int val)
 }
 
 
+
+
 /* Redirection necessary to setup trackbar */
 void HsvThresholdTrackbar::onLow_H_track(int val, void* ptr)
 {
@@ -116,4 +121,65 @@ void HsvThresholdTrackbar::onHigh_V_track(int val, void* ptr)
 {
     HsvThresholdTrackbar* tmp = (HsvThresholdTrackbar*)(ptr);
     tmp->high_V_callback(val);
+}
+
+
+
+
+
+
+/* HSV preset functions */
+void HsvThresholdTrackbar::onPreset_track(int val, void *ptr)
+{
+    HsvThresholdTrackbar* tmp = (HsvThresholdTrackbar*)(ptr);
+    tmp->preset_HSV_callback(val);
+}
+void HsvThresholdTrackbar::preset_HSV_callback(int val)
+{
+    
+    switch (val)
+    {
+        case RED: 
+
+            this->high_H  = max_value_H;
+            this->low_H   = 0;
+            this->high_S  = max_value;
+            this->low_S   = 120;
+            this->high_V  = max_value;
+            this->low_V   = 0;
+
+            break;
+
+        case BLU:
+
+            this->high_H  = 130;
+            this->low_H   = 80;
+            this->high_S  = max_value;
+            this->low_S   = 52;
+            this->high_V  = max_value;
+            this->low_V   = 0;
+
+            break;
+
+        case GRN:
+
+            this->high_H  = 152;
+            this->low_H   = 27;
+            this->high_S  = max_value;
+            this->low_S   = 44;
+            this->high_V  = max_value;
+            this->low_V   = 0;
+
+            break;
+    
+        default:
+            break;
+    }
+
+    setTrackbarPos("High H",    this->window_name, this->high_H);
+    setTrackbarPos("Low H",     this->window_name, this->low_H);
+    setTrackbarPos("High S",    this->window_name, this->high_S);
+    setTrackbarPos("Low S",     this->window_name, this->low_S);
+    setTrackbarPos("High V",    this->window_name, this->high_V);
+    setTrackbarPos("Low V",     this->window_name, this->low_V);
 }

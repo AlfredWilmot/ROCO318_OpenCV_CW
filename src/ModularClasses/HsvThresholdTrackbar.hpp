@@ -33,6 +33,7 @@ private:
     static void onHigh_S_track(int val, void *ptr);
     static void onLow_V_track(int val, void *ptr);
     static void onHigh_V_track(int val, void *ptr);
+    
 
     /* Callback functions called whenever a trackbar is adjusted */
     void low_H_callback(int val);
@@ -41,6 +42,17 @@ private:
     void high_S_callback(int val);
     void low_V_callback(int val);
     void high_V_callback(int val);
+
+
+    /* HSV presets */
+    void preset_HSV_callback(int val);                  // Callback fcn
+    static void onPreset_track(int val, void *ptr);     // Redirection fcn
+    #define RED 0
+    #define GRN 1
+    #define BLU 2
+    int preset_count = 0;
+    const int preset_max = BLU;
+
 
 public:
     HsvThresholdTrackbar(cv::Mat *infrm, cv::Mat *outfrm, const cv::String glugg_nafn);
