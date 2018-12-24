@@ -23,7 +23,8 @@ private:
     /* Contour ROI stuff */
     std::vector<std::vector<cv::Point>> contours;
     std::vector<cv::Vec4i> hierarchy;
-
+    
+    std::vector<cv::Point> prev_contour;
     cv::Moments mu;
     cv::Point2f mc;
 

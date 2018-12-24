@@ -36,13 +36,13 @@ void ContourRectangles::FindRectangles()
     this->errorHandling();
 
 
-    /* Whenever a new pixel is selected use the vanialla input frame instead of the previous mased frame */
+    /*  Whenever a new pixel is selected use the vanialla input frame instead of the previous mased frame,
+        & reset contour comparator */
     if(this->get_seed_pixel_hsv() == 0)
     {
-         findContours(*this->input_frame, this->contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+        findContours(*this->input_frame, this->contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+        this->prev_contour.clear();
     }
- 
-    //this->get_seed_pixel_hsv();
 
     /* New mask for a new input frame */
     Mat mask(this->input_frame->size(), CV_8UC1, Scalar(0,0,0));
@@ -76,12 +76,25 @@ void ContourRectangles::FindRectangles()
                 this->_seed_x = int(this->mc.x);
                 this->_seed_y = int(this->mc.y);   
 
-
+                /*  Ignore contours that are more than 20% larger than the previous known contour 
+                    As this implies the area is probably being dilated by unfiltered noie */
+                // if( ( (float(this->contours[i].size()) / float(this->prev_contour.size()) ) > 1.2) 
+                //     &&
+                //     (!(this->prev_contour.empty()))
+                // )
+                // {
+                //     this->contours[i] = this->prev_contour;
+                // }
+                // else
+                // {
+                //     this->prev_contour = this->contours[i];
+                // }
 
 
                 /* Defining bounding box for a given contour */
                 minRect[i] = minAreaRect( this->contours[i] );
-                
+                /* This will shift ROI mask to new CoM while target moves within a noisy region */
+                minRect[i].center = mc;
                 
                 /* rotated rectangle verticies */
                 Point2f rect_points[4];
@@ -122,7 +135,6 @@ void ContourRectangles::FindRectangles()
 
 
                 bitwise_and(*this->input_frame, mask, this->masked_input);
-                //imshow("mask", mask);
                 imshow("Masked image Pre", this->masked_input);
                 this->morph();
                 imshow("Masked image Post", this->masked_input);
@@ -144,12 +156,13 @@ void ContourRectangles::morph()
     // Closing  = 3
     // Gradient = 4
 
-    int operation = 2;
-    int morph_size = 5;
+    int operation  = 2;
+    int morph_size = 2;
+    int iterations = 2;
     Mat element = getStructuringElement( 0, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
 
     /// Apply the specified morphology operation
-    morphologyEx(this->masked_input, this->masked_input, operation, element);
+    morphologyEx(this->masked_input, this->masked_input, operation, element, Point(-1,-1), iterations);
 }
 
 
