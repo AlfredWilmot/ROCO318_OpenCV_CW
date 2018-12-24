@@ -57,10 +57,6 @@ void ContourRectangles::FindRectangles()
             findContours(this->masked_input, this->contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE); 
         }
 
-        
-        // Mat tmp = this->input_frame->clone();
-        // findContours(tmp, this->contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-
         /* Generate rotated-rectangle ROI, from contours */
         vector<RotatedRect> minRect( this->contours.size() );
 
@@ -94,7 +90,7 @@ void ContourRectangles::FindRectangles()
                 /* Enlarged rotated rectangle (for simpler mask implementation)*/
                 Size2f new_size = minRect[i].size;
                 new_size.height = new_size.height + 10;
-                new_size.width  = new_size.height + 10;
+                new_size.width  = new_size.width + 10;
                 RotatedRect mask_rect(minRect[i].center, new_size, minRect[i].angle);
 
                 Point vertices[4];  
@@ -125,10 +121,11 @@ void ContourRectangles::FindRectangles()
                 */
 
 
-               bitwise_and(*this->input_frame, mask, this->masked_input);
-               imshow("input_frame", *this->input_frame);
-               imshow("mask", mask);
-               imshow("Masked image", this->masked_input);
+                bitwise_and(*this->input_frame, mask, this->masked_input);
+                //imshow("mask", mask);
+                imshow("Masked image Pre", this->masked_input);
+                this->morph();
+                imshow("Masked image Post", this->masked_input);
             }
             
         }
@@ -136,6 +133,23 @@ void ContourRectangles::FindRectangles()
 
     /* Display processed image */
     imshow(this->window_name, *output_frame);
+}
+
+
+void ContourRectangles::morph()
+{   
+    // Erode    = 0
+    // Dilate   = 1
+    // Opening  = 2
+    // Closing  = 3
+    // Gradient = 4
+
+    int operation = 2;
+    int morph_size = 5;
+    Mat element = getStructuringElement( 0, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
+
+    /// Apply the specified morphology operation
+    morphologyEx(this->masked_input, this->masked_input, operation, element);
 }
 
 

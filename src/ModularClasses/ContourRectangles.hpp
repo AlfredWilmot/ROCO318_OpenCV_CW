@@ -34,6 +34,8 @@ private:
 
     cv::Mat masked_input;
 
+    void morph();
+
 public:
     ContourRectangles(cv::Mat *infrm, cv::Mat *outfrm, cv::String glugg_nafn);
     void FindRectangles();
