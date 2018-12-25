@@ -24,15 +24,19 @@ private:
     std::vector<std::vector<cv::Point>> contours;
     std::vector<cv::Vec4i> hierarchy;
     
-    std::vector<cv::Point> prev_contour;
+    /* ROI Center of Mass */
     cv::Moments mu;
     cv::Point2f mc;
 
+    /* ROI visual feedback */
     cv::Scalar const redDot = cv::Scalar(1,0,255);
     cv::Scalar const ROI_box = cv::Scalar(255,0,0);
 
+    /* Used to determine contour that contains the seed pixel */
     int contains_seed = 0;
 
+    /* Used for filtering noie after seed pixel has been selected */
+    cv::Mat mask;
     cv::Mat masked_input;
 
     void morph();
