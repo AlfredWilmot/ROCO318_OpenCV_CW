@@ -41,7 +41,6 @@ void ContourRectangles::FindRectangles()
     if(this->get_seed_pixel_hsv() == 0)
     {
         findContours(*this->input_frame, this->contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-        this->prev_contour.clear();
     }
 
     /* New mask for a new input frame */
@@ -99,6 +98,32 @@ void ContourRectangles::FindRectangles()
                 /* rotated rectangle verticies */
                 Point2f rect_points[4];
                 minRect[i].points( rect_points );
+
+                
+                /* Displaying bounding box pixel-height & pixel-width */
+                //printf("height: %f, width: %f\n\r", minRect[i].size.height, minRect[i].size.width);
+
+                this->distance_estimate = calibration_card_width * focal_length / minRect[i].size.width;
+
+
+                if(this->avg_count < this->count_limit)
+                {
+                    this->avg_count++;
+                    this->avg_distance += this->distance_estimate;  // running sum.
+
+                }
+                else
+                {
+                    this->avg_count = 0;                    // reset the counter.
+
+                    this->avg_distance/=this->count_limit;  // performa averaging.
+                    
+                    printf("Estimated distance (averaged): %1.2fcm\n\r",  this->avg_distance);
+
+                    this->avg_distance = 0.0;               // start averaging anew, using a fresh set of values (mitigates drift).
+
+                }
+
 
                 /* Enlarged rotated rectangle (for simpler mask implementation)*/
                 Size2f new_size = minRect[i].size;
