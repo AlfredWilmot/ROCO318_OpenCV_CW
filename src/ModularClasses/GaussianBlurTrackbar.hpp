@@ -17,7 +17,7 @@ protected:
     cv::Mat *_output_frame;
     cv::String window_name;
 
-    int _gauss_blur_qty = 3, _max_gauss = 100;  // Trackbar parameters
+    int _gauss_blur_qty = 1, _max_gauss = 100;  // Trackbar parameters
 
     static void onGausTrack(int val, void *ptr);
     void gauss_blur_callback(int val);
