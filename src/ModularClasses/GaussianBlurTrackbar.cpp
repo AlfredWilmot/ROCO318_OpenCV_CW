@@ -14,7 +14,7 @@ using namespace std;
 GaussianBlurTrackbar::GaussianBlurTrackbar(Mat *infrm, Mat *outfrm, String glugg_nafn)
 {
     this->_input_frame  = infrm;
-    this->_output_frame = outfrm;
+    //this->_output_frame = outfrm;
     this->window_name   = glugg_nafn;
 
     // Need to setup window so trackbars can be attached to it.
@@ -47,8 +47,8 @@ void GaussianBlurTrackbar::gauss_blur_callback(int val)
 /* Processing methods */
 void GaussianBlurTrackbar::gauss_blur()
 {
-    GaussianBlur(*this->_input_frame, *this->_output_frame, Size(this->_gauss_blur_qty, this->_gauss_blur_qty),0,0);
-    imshow(this->window_name, *this->_output_frame);
+    GaussianBlur(*this->_input_frame, *this->_input_frame, Size(this->_gauss_blur_qty, this->_gauss_blur_qty),0,0);
+    imshow(this->window_name, *this->_input_frame);
 }
 
 
