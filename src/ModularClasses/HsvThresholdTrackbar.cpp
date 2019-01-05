@@ -5,11 +5,10 @@ using namespace std;
 
 
 /* Gathering I/O frames and display window */
-HsvThresholdTrackbar::HsvThresholdTrackbar(Mat *infrm, Mat *outfrm, String glugg_nafn):
-GaussianBlurTrackbar(infrm, outfrm, glugg_nafn)
+HsvThresholdTrackbar::HsvThresholdTrackbar(Mat *infrm, String glugg_nafn):
+GaussianBlurTrackbar(infrm, glugg_nafn)
 {
     this->_input_frame  = infrm;
-    //this->_output_frame = outfrm;
     this->window_name   = glugg_nafn;
 
     // Need to setup window so trackbars can be attached to it.

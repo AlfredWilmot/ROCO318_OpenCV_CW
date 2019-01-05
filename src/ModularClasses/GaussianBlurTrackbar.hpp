@@ -14,7 +14,6 @@ class GaussianBlurTrackbar
     private:
         
         cv::Mat *_input_frame;
-        cv::Mat *_output_frame;
         cv::String window_name;
 
         int _gauss_blur_qty = 1, _max_gauss = 100;  // Trackbar parameters
@@ -23,7 +22,7 @@ class GaussianBlurTrackbar
         void gauss_blur_callback(int val);
 
     public:
-        GaussianBlurTrackbar(cv::Mat *infrm, cv::Mat *outfrm, const cv::String glugg_nafn);
+        GaussianBlurTrackbar(cv::Mat *infrm, const cv::String glugg_nafn);
         void AddGaussTrackbar();
         void gauss_blur();
 };

@@ -13,16 +13,25 @@ using namespace std;
 #include "ContourRectangles.hpp"
 
 /* Class constructor */
-ContourRectangles::ContourRectangles(Mat *infrm, Mat *outfrm, String glugg_nafn): ClickForPixelData(infrm, outfrm, glugg_nafn) 
+ContourRectangles::ContourRectangles(Mat *infrm, String glugg_nafn): 
+ClickForPixelData(glugg_nafn),
+HsvThresholdTrackbar(infrm, "HSV Thresholding")
 {
 
-    this->input_frame   = infrm;
-    this->output_frame  = outfrm;
-    this->window_name   = glugg_nafn;
+    this->_input_frame          = infrm;
+    this->_vanilla_input_frame  = infrm->clone();
+    this->window_name           = glugg_nafn;
 
-    this->masked_input = Mat(this->input_frame->size(), CV_8UC3);
+    this->masked_input = Mat(this->_input_frame->size(), CV_8UC3);
 
-    //namedWindow(this->window_name);
+    namedWindow(this->window_name);
+}
+
+
+void ContourRectangles::GrabOriginalFrame(Mat *cam_frm)
+{
+    this->_vanilla_input_frame  = cam_frm->clone();
+    FrameToClick(&this->_vanilla_input_frame);
 }
 
 
@@ -40,11 +49,11 @@ void ContourRectangles::FindRectangles()
         & reset contour comparator */
     if(this->get_seed_pixel_hsv() == 0)
     {
-        findContours(*this->input_frame, this->contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+        findContours(*this->_input_frame, this->contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
     }
 
     /* New mask for a new input frame */
-    Mat mask(this->input_frame->size(), CV_8UC1, Scalar(0,0,0));
+    Mat mask(this->_input_frame->size(), CV_8UC1, Scalar(0,0,0));
 
     /* Only start drawing bounding boxes once the seed has been defined by the first mouse-click */
     if(this->_seed_x && this->_seed_y)
@@ -70,7 +79,7 @@ void ContourRectangles::FindRectangles()
                 mc = Point2f( static_cast<float>(mu.m10/mu.m00) , static_cast<float>(mu.m01/mu.m00) );
                
                 /* Drawing CoM */
-                circle(*this->output_frame, mc, 4, redDot, -1, 8, 0 );
+                circle(this->_vanilla_input_frame, mc, 4, redDot, -1, 8, 0 );
                 /* Update seed location to that of CoM to track ROI*/
                 this->_seed_x = int(this->mc.x);
                 this->_seed_y = int(this->mc.y);   
@@ -140,7 +149,7 @@ void ContourRectangles::FindRectangles()
                     Convert the vertices into type Point to then fill the ROI for the mask.*/
                 for ( int j = 0; j < 4; j++ )
                 {   
-                    line( *output_frame, rect_points[j], rect_points[(j+1)%4], this->ROI_box, 2);
+                    line( this->_vanilla_input_frame, rect_points[j], rect_points[(j+1)%4], this->ROI_box, 2);
                     vertices[j] = larger_rect_points[j];
                 }
 
@@ -148,7 +157,7 @@ void ContourRectangles::FindRectangles()
                 fillConvexPoly(mask, vertices, 4, this->ROI_box);
 
                 /* Draw contours inside ROI. */
-                drawContours( *output_frame, this->contours, (int)i, this->ROI_box );
+                drawContours( _vanilla_input_frame, this->contours, (int)i, this->ROI_box );
 
 
 
@@ -159,7 +168,7 @@ void ContourRectangles::FindRectangles()
                 */
 
 
-                bitwise_and(*this->input_frame, mask, this->masked_input);
+                bitwise_and(*this->_input_frame, mask, this->masked_input);
                 imshow("Masked image Pre", this->masked_input);
                 this->morph();
                 imshow("Masked image Post", this->masked_input);
@@ -169,7 +178,7 @@ void ContourRectangles::FindRectangles()
     }
 
     /* Display processed image */
-    imshow(this->window_name, *output_frame);
+    imshow(this->window_name, this->_vanilla_input_frame);
 }
 
 
@@ -195,19 +204,19 @@ void ContourRectangles::morph()
 /* Return an error message if the matrix is not a binary image (needed for contour-fitting)*/
 void ContourRectangles::errorHandling()
 {    
-    if(input_frame->empty())
+    if(_input_frame->empty())
     {
         throw std::invalid_argument( "Input frame is empty!");
     }
-    else if(input_frame->channels() != 1)
+    else if(_input_frame->channels() != 1)
     {
-        printf("input frame has %d channels.\n\r", input_frame->channels());
+        printf("input frame has %d channels.\n\r", _input_frame->channels());
         throw std::invalid_argument( "Input frame must be single channel.\n\r");
     }
 
     /* Need to fill the output frame before inserting contours/ rectangles, if it's empty */
-    if(this->output_frame->empty())
+    if(this->_vanilla_input_frame.empty())
     {
-        *this->output_frame = Mat::zeros( _input_frame->size(), CV_8UC3 );
+        this->_vanilla_input_frame = Mat::zeros( this->_input_frame->size(), CV_8UC3 );
     }
 }

@@ -15,7 +15,6 @@ class HsvThresholdTrackbar: public GaussianBlurTrackbar
     private:
         
         cv::Mat *_input_frame;
-        cv::Mat *_output_frame;
         cv::String window_name;
 
 
@@ -56,7 +55,7 @@ class HsvThresholdTrackbar: public GaussianBlurTrackbar
 
 
     public:
-        HsvThresholdTrackbar(cv::Mat *infrm, cv::Mat *outfrm, const cv::String glugg_nafn);
+        HsvThresholdTrackbar(cv::Mat *infrm, const cv::String glugg_nafn);
         void run_HSV_thresh();
 };
 

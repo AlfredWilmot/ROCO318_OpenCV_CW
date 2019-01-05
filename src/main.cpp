@@ -37,27 +37,26 @@ int main(int, char **)
         return -1;
     }    
 
-    namedWindow(pre_process_window);
-
-    HsvThresholdTrackbar    myHsvObj(&input_frame, &output_frame_hsv, hsv_window);
+    //HsvThresholdTrackbar    myHsvObj(&input_frame, &output_frame_hsv, hsv_window);
 
     //CannyThresholdTrackbar  myCannyObj(&output_frame_hsv, &output_frame_canny, contour_window);
-    ContourRectangles       myRects(&output_frame_hsv, &output_frame_contour, contour_window);
+    ContourRectangles       myRects(&input_frame, contour_window);
 
     while(1)
     {
         cap >> input_frame; //Capture image from camera.
 
         /* To show generated contour overlayed on the input frame */
-        output_frame_contour = input_frame.clone();
+        //output_frame_contour = input_frame.clone();
 
         //Step 1: Display original image.
-        imshow(pre_process_window, input_frame);
+        //imshow(pre_process_window, input_frame);
         
-        
+        myRects.GrabOriginalFrame(&input_frame);
+
         //Step 2: Apply Gaussian-blur & threshold for desired HSV value.
         //myGaussObj.gauss_blur();
-        myHsvObj.run_HSV_thresh();
+        myRects.run_HSV_thresh();
 
         //Step 3: Apply canny thresholding to image from step 2, and place resultant rectangles ontop of original image.
         //myCannyObj.canny_thresh();

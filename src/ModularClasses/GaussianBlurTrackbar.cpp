@@ -11,10 +11,9 @@ using namespace std;
 #include "GaussianBlurTrackbar.hpp"
 
 /* Gathering I/O frames and display window */
-GaussianBlurTrackbar::GaussianBlurTrackbar(Mat *infrm, Mat *outfrm, String glugg_nafn)
+GaussianBlurTrackbar::GaussianBlurTrackbar(Mat *infrm, String glugg_nafn)
 {
     this->_input_frame  = infrm;
-    //this->_output_frame = outfrm;
     this->window_name   = glugg_nafn;
 
     // Need to setup window so trackbars can be attached to it.
