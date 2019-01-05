@@ -19,15 +19,6 @@ using namespace cv;
 using namespace std;
 
 Mat input_frame;
-Mat output_frame_hsv;
-Mat output_frame_canny;
-Mat output_frame_contour;
-
-
-char pre_process_window[32]  = "Preprocess";
-const String contour_window  = "Contor Window";
-const String hsv_window      = "HSV Window";
-const String test_win        = "Test";
 
 int main(int, char **)
 {
@@ -37,29 +28,23 @@ int main(int, char **)
         return -1;
     }    
 
-    //HsvThresholdTrackbar    myHsvObj(&input_frame, &output_frame_hsv, hsv_window);
-
-    //CannyThresholdTrackbar  myCannyObj(&output_frame_hsv, &output_frame_canny, contour_window);
-    ContourRectangles       myRects(&input_frame, contour_window);
+    ContourRectangles       myRects(&input_frame, "Contor Window");
 
     while(1)
     {
         cap >> input_frame; //Capture image from camera.
 
-        /* To show generated contour overlayed on the input frame */
-        //output_frame_contour = input_frame.clone();
-
-        //Step 1: Display original image.
-        //imshow(pre_process_window, input_frame);
-        
+        /* Store original camera frame so rectangle can be shown over it */
+        /* Also used to designate the frame for mouse-click pixel selection */
         myRects.GrabOriginalFrame(&input_frame);
 
-        //Step 2: Apply Gaussian-blur & threshold for desired HSV value.
-        //myGaussObj.gauss_blur();
+        /* Apply HSV thresholding and show processed image with some trackbars for parameter tweaks */
         myRects.run_HSV_thresh();
 
-        //Step 3: Apply canny thresholding to image from step 2, and place resultant rectangles ontop of original image.
-        //myCannyObj.canny_thresh();
+        /*  Detect largest contour enclosing seed-pixel, 
+            infer CoM of resulting contour (assign as new "seed_pixel"),
+            Draw rectangle around contour and use seed_pixel as it's center point
+            ... TBC */
         myRects.FindRectangles();
         
         if (waitKey(10) == 27)
