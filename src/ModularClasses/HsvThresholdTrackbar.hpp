@@ -53,6 +53,10 @@ class HsvThresholdTrackbar: public GaussianBlurTrackbar
         int preset_count = 0;
         const int preset_max = BLU;
 
+        int red[6] = {0, max_value_H, 120, max_value, 0, max_value};
+        int grn[6] = {27, 152, 44, max_value, 0, max_value};
+        int blu[6] = {80, 130, 52, max_value, 0, max_value};
+
 
     public:
         HsvThresholdTrackbar(cv::Mat *infrm, const cv::String glugg_nafn);

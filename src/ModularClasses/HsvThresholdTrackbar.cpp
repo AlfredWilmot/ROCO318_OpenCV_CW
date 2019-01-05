@@ -140,37 +140,40 @@ void HsvThresholdTrackbar::preset_HSV_callback(int val)
     {
         case RED: 
 
-            this->high_H  = max_value_H;
-            this->low_H   = 0;
-            this->high_S  = max_value;
-            this->low_S   = 120;
-            this->high_V  = max_value;
-            this->low_V   = 0;
-
-            break;
-
-        case BLU:
-
-            this->high_H  = 130;
-            this->low_H   = 80;
-            this->high_S  = max_value;
-            this->low_S   = 52;
-            this->high_V  = max_value;
-            this->low_V   = 0;
+            this->low_H   = this->red[0];
+            this->high_H  = this->red[1];
+            this->low_S   = this->red[2];
+            this->high_S  = this->red[3];
+            this->low_V   = this->red[4];
+            this->high_V  = this->red[5];
+            
 
             break;
 
         case GRN:
 
-            this->high_H  = 152;
-            this->low_H   = 27;
-            this->high_S  = max_value;
-            this->low_S   = 44;
-            this->high_V  = max_value;
-            this->low_V   = 0;
+            this->low_H   = this->grn[0];
+            this->high_H  = this->grn[1];
+            this->low_S   = this->grn[2];
+            this->high_S  = this->grn[3];
+            this->low_V   = this->grn[4];
+            this->high_V  = this->grn[5];
+            
 
             break;
-    
+
+        case BLU:
+
+            this->low_H   = this->blu[0];
+            this->high_H  = this->blu[1];
+            this->low_S   = this->blu[2];
+            this->high_S  = this->blu[3];
+            this->low_V   = this->blu[4];
+            this->high_V  = this->blu[5];
+            
+
+            break;    
+
         default:
             break;
     }
