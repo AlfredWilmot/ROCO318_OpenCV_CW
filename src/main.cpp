@@ -8,7 +8,6 @@
 #include <iostream>
 
 /* user-made libraries */
-//#include "RectDetect1.hpp"
 #include "./ModularClasses/ContourRectangles.hpp"
 #include "./ModularClasses/GaussianBlurTrackbar.hpp"
 #include "./ModularClasses/CannyThresholdTrackbar.hpp"
@@ -18,44 +17,45 @@
 using namespace cv;
 using namespace std;
 
+/* Stores captured camera frame */
 Mat input_frame;
 
 int main(int, char **)
 {
     VideoCapture cap(0); // open the default camera
-    if (!cap.isOpened()) // check if we succeeded and return -1 if not
+    if (!cap.isOpened()) // check default camera is available, exit if not
     {
+        printf("Default camera is unavailable!\n\r");
         return -1;
     }    
 
-    ContourRectangles       myRects(&input_frame);
-    //ClickForPixelData       test("Click me!");
-    //HsvThresholdTrackbar    test(&input_frame, "HSV Thresholding!");
+    /* Instantiate an object of our user-made class */
+    ContourRectangles myRects(&input_frame);
+
     while(1)
     {
         cap >> input_frame; //Capture image from camera.
 
-        /* Store original camera frame so rectangle can be shown over it */
-        /* Also used to designate the frame for mouse-click pixel selection */
+        /*  Saves a copy of the input frame so that the user can interact with an unadulterated version of it by clicking 
+            on the interaction window */
         myRects.FrameToClick(input_frame);
 
-        /* Apply HSV thresholding and show processed image with some trackbars for parameter tweaks */
+        /*  Apply HSV thresholding and show processed image with some trackbars for parameter tweaks 
+            Also attaches a trackbar for Gaussian blur. */
         myRects.run_HSV_thresh();
 
-        /*  Detect largest contour enclosing seed-pixel, 
-            infer CoM of resulting contour (assign as new "seed_pixel"),
-            Draw rectangle around contour and use seed_pixel as it's center point
-            ... TBC */
+        /*  Places an enclosing rectangle around the ROI contour, 
+            and tracks it's position by following the contour's CoM.
+            The rectangle, enclosing contour, and it's CoM, are all
+            drawn onto the aforementioned unadulterated frame that the user can interact with.*/
         myRects.FindRectangles();
 
+        /* Exit loop and safely deallocate memory for display windows if ESC key is pressed */
         if (waitKey(10) == 27)
         {
-            printf("%d\n\r", input_frame.channels());
             destroyAllWindows();
             break;
         }   
     }
-    
-    // the camera will be deinitialized automatically in VideoCapture destructor
     return 0;
 }
