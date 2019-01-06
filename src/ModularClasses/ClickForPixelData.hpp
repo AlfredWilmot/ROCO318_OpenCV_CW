@@ -27,7 +27,7 @@ class ClickForPixelData
         /* Trackbar determines if pixel HSV is ignored or not */
         void captureHSV(int val);
         static void onCaptureHSV(int val, void* ptr);
-        int capture_hsv = 0;
+        int capture_hsv = 1;
 
     protected:
         /* Last known pixel HSV values */
