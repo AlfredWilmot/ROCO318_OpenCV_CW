@@ -35,6 +35,7 @@ void HsvThresholdTrackbar::adjust_slideBars()
     if(this->get_seed_pixel_hsv(false) == 0 && this->capture_hsv == 1) 
     {
         
+        /* hard-coded HSV ranges around the seed-pixel HSV values */
         int H_step = 20;
         int S_step = 50;
         int V_step = 50;
@@ -63,9 +64,6 @@ void HsvThresholdTrackbar::adjust_slideBars()
         setTrackbarPos("High S", this->window_name, this->high_S);
         setTrackbarPos("Low V",  this->window_name, this->low_V);
         setTrackbarPos("High V", this->window_name, this->high_V);
-
-
-        //this->_mouse_clk = false;   // reset the flag 
     }
 }
 

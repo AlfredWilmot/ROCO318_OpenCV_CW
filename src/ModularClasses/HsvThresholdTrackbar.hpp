@@ -1,3 +1,8 @@
+/*--------------------------------------------------------------------------------------*/
+/*  Attaches HSV thresholding trackbars onto window showing the binarized input image.
+    Inherits Gaussian blur trackbar and uses it to perform gaussian blur on input image, 
+    prior to HSV thresholding.                                                          */
+/*--------------------------------------------------------------------------------------*/
 #ifndef __HSVTHRESHOLDTRACKBAR__
 #define __HSVTHRESHOLDTRACKBAR__
 
@@ -49,9 +54,9 @@ class HsvThresholdTrackbar: public GaussianBlurTrackbar, public ClickForPixelDat
         int preset_count = 0;
         const int preset_max = BLU;
 
-        int red[6] = {0, max_value_H, 120, max_value, 0, max_value};
-        int grn[6] = {27, 152, 44, max_value, 0, max_value};
-        int blu[6] = {80, 130, 52, max_value, 0, max_value};
+        int red[6] = {0, max_value_H, 120, max_value, 0, max_value};    // Preset HSV values for color Red 
+        int grn[6] = {27, 152, 44, max_value, 0, max_value};            // Preset HSV values for color Green 
+        int blu[6] = {80, 130, 52, max_value, 0, max_value};            // Preset HSV values for color Blue  
 
         void adjust_slideBars(); // Adjust slidebars according to the last known HSV parameters from the ClickForPixelData Base class.
 

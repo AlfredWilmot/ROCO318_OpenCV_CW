@@ -72,7 +72,7 @@ void CannyThresholdTrackbar::onCannyTrack(int val, void* ptr)
     tmp->canny_thresh_callback(val);
 }
 
-
+/* make sure input frame isn't empty. */
 void CannyThresholdTrackbar::errorHandling()
 {
     if(this->_input_frame->empty())
