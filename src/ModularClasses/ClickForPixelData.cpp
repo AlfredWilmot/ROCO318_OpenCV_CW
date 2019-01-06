@@ -32,6 +32,7 @@ void ClickForPixelData::FrameToClick(Mat clk_frm)
     cv::imshow(this->display_window, this->_frm_to_clk);
 }
 
+
 /*---- Handler method that reacts to user selecting pixel in interactive window ----*/
 int ClickForPixelData::mouseEvent(int evt, int x, int y, int flags) 
 {                    
@@ -45,14 +46,14 @@ int ClickForPixelData::mouseEvent(int evt, int x, int y, int flags)
         this->_seed_y = y;
 
         /* Print pixel data to terminal */
-        get_seed_pixel_hsv();
+        get_seed_pixel_hsv(false);          // Subclass will want to use _mouse_clk flag later, so don't reset it.
 
     }         
 }
 
 
 /*---- Calculates and stores HSV value of pixel at input coordinate x,y ----*/
-int ClickForPixelData::get_seed_pixel_hsv()
+int ClickForPixelData::get_seed_pixel_hsv(bool clear_mouse_clk)
 {
 
     // Can only update & display the stored HSV data once per mouse-click.
@@ -86,11 +87,23 @@ int ClickForPixelData::get_seed_pixel_hsv()
         this->S = hsv.val[1];
         this->V = hsv.val[2];
 
+
+        /* clear the _mouse_clk flag only if indicated to do so externally */
+        if(clear_mouse_clk)
+        {
+            /* Display values to terminal for debugging */
             printf("[%d, %d] H:%d, S:%d, V:%d\n\r", 
                     this->_seed_x, this->_seed_y, 
                     this->H, this->S, this->V);
 
-        this->_mouse_clk = false; //reset flag, until next mouse click.
+            /* reset flag */
+            this->_mouse_clk = false;
+        }
+        else
+        {   
+            /* Ensure flag is set so it can be reset later */
+            this->_mouse_clk = true;
+        }
 
         return 0;
 
