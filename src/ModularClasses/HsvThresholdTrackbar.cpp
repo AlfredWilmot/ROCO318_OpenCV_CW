@@ -35,7 +35,7 @@ void HsvThresholdTrackbar::adjust_slideBars()
     if(this->get_seed_pixel_hsv(false) == 0 && this->capture_hsv == 1) 
     {
         
-        int H_step = 10;
+        int H_step = 20;
         int S_step = 50;
         int V_step = 50;
 
@@ -44,16 +44,16 @@ void HsvThresholdTrackbar::adjust_slideBars()
         this->low_S  = ( (this->S - S_step) > 0) ? this->S - S_step : 0;
         this->low_V  = ( (this->V - V_step) > 0) ? this->V - V_step : 0;
 
-        this->high_H = ( (this->H + H_step) < this->max_value_H) ? this->H + H_step : 0; 
-        this->high_S = ( (this->S + S_step) < this->max_value)   ? this->S + S_step : 0; 
-        this->high_V = ( (this->V + V_step) < this->max_value)   ? this->V + V_step : 0; 
+        this->high_H = ( (this->H + H_step) < this->max_value_H) ? this->H + H_step : this->max_value_H; 
+        this->high_S = ( (this->S + S_step) < this->max_value)   ? this->S + S_step : this->max_value; 
+        this->high_V = ( (this->V + V_step) < this->max_value)   ? this->V + V_step : this->max_value; 
 
 
         /* Consider that color RED is at either extreme of the Hue-spectrum */
-        if(this->low_H == 0 || this->high_H == 180)
+        if(this->low_H == 0 || this->high_H == this->max_value_H)
         {
           this->low_H  = 0;
-          this->high_H = 180;
+          this->high_H = this->max_value_H;
         }
 
         /* Update trackbar values */
