@@ -6,16 +6,13 @@
 #include <iostream>
 #include <stdexcept>
 
-
-#include "ClickForPixelData.hpp"
 #include "HsvThresholdTrackbar.hpp"
 
 /* Generates an image of detected rectangles from an input image, by using contours */
-class ContourRectangles : public ClickForPixelData, public HsvThresholdTrackbar
+class ContourRectangles : public HsvThresholdTrackbar
 {
 private:
-    cv::Mat *_input_frame;
-    cv::Mat _vanilla_input_frame;
+
     cv::String window_name;
     
     void errorHandling();
@@ -70,10 +67,7 @@ private:
 
 
 public:
-    ContourRectangles(cv::Mat *infrm, cv::String glugg_nafn);
+    ContourRectangles(cv::Mat *infrm);
     /* Fits rectangle onto target contour and does some basic tracking using a ROI. HSV must be calibrated first!*/
     void FindRectangles();
-    /* Overlay the fitted rectangle onto the untouched camer frame by storing camera frame on each iteration*/
-    void GrabOriginalFrame(cv::Mat *cam_frm);
-
 };

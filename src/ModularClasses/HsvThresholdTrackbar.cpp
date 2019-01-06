@@ -32,7 +32,7 @@ ClickForPixelData("Click me!")
 /*---- Use inherited get_pixel_HSV to adjust slidebars  ----*/
 void HsvThresholdTrackbar::adjust_slideBars()
 {
-    if(this->_mouse_clk) 
+    if(this->get_seed_pixel_hsv(false) == 0 && this->capture_hsv == 1) 
     {
         
         int H_step = 10;
@@ -65,7 +65,7 @@ void HsvThresholdTrackbar::adjust_slideBars()
         setTrackbarPos("High V", this->window_name, this->high_V);
 
 
-        this->_mouse_clk = false;   // reset the flag 
+        //this->_mouse_clk = false;   // reset the flag 
     }
 }
 

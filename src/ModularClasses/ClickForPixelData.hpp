@@ -19,17 +19,25 @@ class ClickForPixelData
 {
     private:
 
-        /* I/O frame and window */
-        cv::Mat _frm_to_clk;
-        cv::String display_window;
-
 
         /* Trackbar determines if pixel HSV is ignored or not */
         void captureHSV(int val);
         static void onCaptureHSV(int val, void* ptr);
-        int capture_hsv = 1;
 
     protected:
+
+        /* Useful for subclasses to see if user wants to update seed HSV */
+        int capture_hsv = 1;
+
+        /* Interactive window*/
+        cv::String click_display_window;
+
+
+        /* Frame displayed onto the interactive window*/
+        // THIS MUST BE ASSIGNED BEFORE PERFORMING ANY OTHER OPERATOIN ON INPUT IMAGE 
+        cv::Mat _frm_to_clk;
+
+
         /* Last known pixel HSV values */
         int H = 0;
         int S = 0;

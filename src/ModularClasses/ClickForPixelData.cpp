@@ -17,22 +17,22 @@ using namespace std;
 /*---- Class initializer ----*/
 ClickForPixelData::ClickForPixelData(String glugg_nafn)
 {
-    this->display_window = glugg_nafn;
+    this->click_display_window = glugg_nafn;
 
-    namedWindow(this->display_window);
+    namedWindow(this->click_display_window);
 
     /* Setup mouse-click event on input frame */
-    setMouseCallback(this->display_window, ClickForPixelData::onMouseEvt, this);
+    setMouseCallback(this->click_display_window, ClickForPixelData::onMouseEvt, this);
 
     /* Trackbar determines if selected pixel HSV is capture or not */
-    createTrackbar("Store Pixel HSV?", this->display_window, &this->capture_hsv, 1, ClickForPixelData::onCaptureHSV, this);
+    createTrackbar("Store Pixel HSV?", this->click_display_window, &this->capture_hsv, 1, ClickForPixelData::onCaptureHSV, this);
 }
 
 /*---- Grabs and displays the passed frame in window that user can click to gather HSV data ----*/
 void ClickForPixelData::FrameToClick(Mat clk_frm)
 {
     this-> _frm_to_clk = clk_frm;
-    cv::imshow(this->display_window, this->_frm_to_clk);
+    cv::imshow(this->click_display_window, this->_frm_to_clk);
 }
 
 
@@ -92,15 +92,17 @@ int ClickForPixelData::get_seed_pixel_hsv(bool clear_mouse_clk)
             this->H = hsv.val[0];
             this->S = hsv.val[1];
             this->V = hsv.val[2];
-            }
+        }
+
+
+        /* Display values to terminal for debugging */
+        printf("[%d, %d] H:%d, S:%d, V:%d\n\r", 
+                this->_seed_x, this->_seed_y, 
+                this->H, this->S, this->V);
 
         /* clear the _mouse_clk flag only if indicated to do so externally */
         if(clear_mouse_clk)
         {
-            /* Display values to terminal for debugging */
-            printf("[%d, %d] H:%d, S:%d, V:%d\n\r", 
-                    this->_seed_x, this->_seed_y, 
-                    this->H, this->S, this->V);
 
             /* reset flag */
             this->_mouse_clk = false;

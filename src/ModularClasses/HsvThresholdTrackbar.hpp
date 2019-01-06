@@ -15,7 +15,6 @@ class HsvThresholdTrackbar: public GaussianBlurTrackbar, public ClickForPixelDat
 {
     private:
         
-        cv::Mat *_input_frame;
         cv::String window_name;
 
         /* Redirection methods to get trackbars to function from within class */
@@ -36,6 +35,10 @@ class HsvThresholdTrackbar: public GaussianBlurTrackbar, public ClickForPixelDat
         void high_V_callback(int val);
 
     protected:
+
+        /* This Mat address needs to be shared with the ContourRectangles class */
+        cv::Mat *_input_frame;
+
 
         /* HSV presets */
         void preset_HSV_callback(int val);                  // Callback fcn

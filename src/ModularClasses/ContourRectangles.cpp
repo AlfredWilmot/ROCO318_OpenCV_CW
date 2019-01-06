@@ -13,25 +13,12 @@ using namespace std;
 #include "ContourRectangles.hpp"
 
 /* Class constructor */
-ContourRectangles::ContourRectangles(Mat *infrm, String glugg_nafn): 
-ClickForPixelData(glugg_nafn),
+ContourRectangles::ContourRectangles(Mat *infrm): 
 HsvThresholdTrackbar(infrm, "HSV Thresholding")
 {
-
-    this->_input_frame          = infrm;
-    this->_vanilla_input_frame  = infrm->clone();
-    this->window_name           = glugg_nafn;
+    this->window_name           = this->click_display_window;
 
     this->masked_input = Mat(this->_input_frame->size(), CV_8UC3);
-
-    namedWindow(this->window_name);
-}
-
-
-void ContourRectangles::GrabOriginalFrame(Mat *cam_frm)
-{
-    this->_vanilla_input_frame  = cam_frm->clone();
-    FrameToClick(&this->_vanilla_input_frame);
 }
 
 
@@ -47,10 +34,11 @@ void ContourRectangles::FindRectangles()
 
     /*  Whenever a new pixel is selected use the vanialla input frame instead of the previous mased frame,
         & reset contour comparator */
-    if(this->get_seed_pixel_hsv() == 0)
+    if(this->get_seed_pixel_hsv(true) == 0)
     {
-        findContours(*this->_input_frame, this->contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+         findContours(*this->_input_frame, this->contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
     }
+
 
     /* New mask for a new input frame */
     Mat mask(this->_input_frame->size(), CV_8UC1, Scalar(0,0,0));
@@ -79,7 +67,7 @@ void ContourRectangles::FindRectangles()
                 mc = Point2f( static_cast<float>(mu.m10/mu.m00) , static_cast<float>(mu.m01/mu.m00) );
                
                 /* Drawing CoM */
-                circle(this->_vanilla_input_frame, mc, 4, redDot, -1, 8, 0 );
+                circle(this->_frm_to_clk, mc, 4, redDot, -1, 8, 0 );
                 /* Update seed location to that of CoM to track ROI*/
                 this->_seed_x = int(this->mc.x);
                 this->_seed_y = int(this->mc.y);   
@@ -149,7 +137,7 @@ void ContourRectangles::FindRectangles()
                     Convert the vertices into type Point to then fill the ROI for the mask.*/
                 for ( int j = 0; j < 4; j++ )
                 {   
-                    line( this->_vanilla_input_frame, rect_points[j], rect_points[(j+1)%4], this->ROI_box, 2);
+                    line( this->_frm_to_clk, rect_points[j], rect_points[(j+1)%4], this->ROI_box, 2);
                     vertices[j] = larger_rect_points[j];
                 }
 
@@ -157,7 +145,7 @@ void ContourRectangles::FindRectangles()
                 fillConvexPoly(mask, vertices, 4, this->ROI_box);
 
                 /* Draw contours inside ROI. */
-                drawContours( _vanilla_input_frame, this->contours, (int)i, this->ROI_box );
+                drawContours( this->_frm_to_clk, this->contours, (int)i, this->ROI_box );
 
 
 
@@ -178,7 +166,7 @@ void ContourRectangles::FindRectangles()
     }
 
     /* Display processed image */
-    imshow(this->window_name, this->_vanilla_input_frame);
+    imshow(this->window_name, this->_frm_to_clk);
 }
 
 
@@ -215,8 +203,8 @@ void ContourRectangles::errorHandling()
     }
 
     /* Need to fill the output frame before inserting contours/ rectangles, if it's empty */
-    if(this->_vanilla_input_frame.empty())
+    if(this->_frm_to_clk.empty())
     {
-        this->_vanilla_input_frame = Mat::zeros( this->_input_frame->size(), CV_8UC3 );
+        this->_frm_to_clk = Mat::zeros( this->_input_frame->size(), CV_8UC3 );
     }
 }
