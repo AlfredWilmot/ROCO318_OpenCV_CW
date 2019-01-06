@@ -43,7 +43,7 @@ class ClickForPixelData
 
 
         /* Mouse-click event stuff */
-        bool _mouse_clk;                // Want flag to persist until all events related to a mouse click have transpired
+        bool _mouse_clk = false;                // Want flag to persist until all events related to a mouse click have transpired
         int _seed_x = 0;
         int _seed_y = 0; 
 

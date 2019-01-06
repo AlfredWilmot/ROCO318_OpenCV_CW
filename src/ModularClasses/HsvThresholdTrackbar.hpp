@@ -50,6 +50,7 @@ class HsvThresholdTrackbar: public GaussianBlurTrackbar, public ClickForPixelDat
         int grn[6] = {27, 152, 44, max_value, 0, max_value};
         int blu[6] = {80, 130, 52, max_value, 0, max_value};
 
+        void adjust_slideBars(); // Adjust slidebars according to the last known HSV parameters from the ClickForPixelData Base class.
 
     public:
         HsvThresholdTrackbar(cv::Mat *infrm, const cv::String glugg_nafn);

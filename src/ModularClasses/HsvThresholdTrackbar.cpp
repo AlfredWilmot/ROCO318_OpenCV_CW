@@ -29,6 +29,47 @@ ClickForPixelData("Click me!")
 }
 
 
+/*---- Use inherited get_pixel_HSV to adjust slidebars  ----*/
+void HsvThresholdTrackbar::adjust_slideBars()
+{
+    if(this->_mouse_clk) 
+    {
+        
+        int H_step = 10;
+        int S_step = 50;
+        int V_step = 50;
+
+        /* Use the HSV values to adjust the low/ high HSV trackbar values */
+        this->low_H  = ( (this->H - H_step) > 0) ? this->H - H_step : 0;
+        this->low_S  = ( (this->S - S_step) > 0) ? this->S - S_step : 0;
+        this->low_V  = ( (this->V - V_step) > 0) ? this->V - V_step : 0;
+
+        this->high_H = ( (this->H + H_step) < this->max_value_H) ? this->H + H_step : 0; 
+        this->high_S = ( (this->S + S_step) < this->max_value)   ? this->S + S_step : 0; 
+        this->high_V = ( (this->V + V_step) < this->max_value)   ? this->V + V_step : 0; 
+
+
+        /* Consider that color RED is at either extreme of the Hue-spectrum */
+        if(this->low_H == 0 || this->high_H == 180)
+        {
+          this->low_H  = 0;
+          this->high_H = 180;
+        }
+
+        /* Update trackbar values */
+        setTrackbarPos("Low H",  this->window_name, this->low_H);
+        setTrackbarPos("High H", this->window_name, this->high_H);
+        setTrackbarPos("Low S",  this->window_name, this->low_S);
+        setTrackbarPos("High S", this->window_name, this->high_S);
+        setTrackbarPos("Low V",  this->window_name, this->low_V);
+        setTrackbarPos("High V", this->window_name, this->high_V);
+
+
+        this->_mouse_clk = false;   // reset the flag 
+    }
+}
+
+/*---- Apply HSV thresholding to input image ----*/
 void HsvThresholdTrackbar::run_HSV_thresh()
 {
 
@@ -52,6 +93,11 @@ void HsvThresholdTrackbar::run_HSV_thresh()
     inRange(frame_HSV, Scalar(this->low_H, this->low_S, this->low_V), Scalar(this->high_H, this->high_S, this->high_V), *this->_input_frame);
 
     imshow(this->window_name, *this->_input_frame);
+
+
+    /* Update the slidebars if mouse has been recently clicked */
+    adjust_slideBars();
+
 }
 
 
