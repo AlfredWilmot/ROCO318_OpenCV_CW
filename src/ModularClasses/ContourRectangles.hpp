@@ -1,3 +1,18 @@
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* Places an enclosing rectangle around the ROI contour, and tracks it's position by following the contour's CoM... */
+/*-----------------------------------------------------------------------------------------------------------------*/
+/*  1) First mouse click: contours are fitted to the HSV-thresholded input frame, the corresponding mask is generated.
+    2) This mask is slightly enlarged (for better object tracking).
+    3) The enlarged mask is then masked with the HSV-thresholded input frame (removing distant noise from ROI).
+    4) The result of this masking is then morphologically opened in order to remove any noise within the mask that's adjacent to the ROI.
+    5) This "final masked and processed image" is used as the basis of the mask for the next HSV-thresholded input frame...
+
+        5a) The contours of the previous "final masked and processed image" 
+            are used to generate the mask for the current HSV-thresholded input frame.
+        5b) Repeat from step 2).
+*/
+/*-----------------------------------------------------------------------------------------------------------------*/
+
 #include <iostream>
 #include "opencv2/core.hpp"
 #include "opencv2/imgproc.hpp"
@@ -7,6 +22,16 @@
 #include <stdexcept>
 
 #include "HsvThresholdTrackbar.hpp"
+
+
+/* Some reference code: https://raw.githubusercontent.com/kylehounslow/opencv-tuts/master/object-tracking-tut/objectTrackingTut.cpp */
+/* From here: https://www.youtube.com/watch?v=bSeFrPrqZ2A */
+
+/*--------------------------------------------*/
+/* Removing noise from HSV-thresholded image */
+/*------------------------------------------*/
+//reference here: https://docs.opencv.org/2.4/doc/tutorials/imgproc/opening_closing_hats/opening_closing_hats.html
+
 
 /* Generates an image of detected rectangles from an binarized input image, by using contours */
 class ContourRectangles : public HsvThresholdTrackbar

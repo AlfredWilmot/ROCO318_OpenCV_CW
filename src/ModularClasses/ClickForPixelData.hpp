@@ -14,7 +14,20 @@
 #define __CLICKFORPIXELDATA__
 
 
+/*----------------------------------------------------------*/
+/* Infering pixel color & (x,y) coordinates at mouse click */
+/*--------------------------------------------------------*/
+//reference here: http://opencvexamples.blogspot.com/2014/01/detect-mouse-clicks-and-moves-on-image.html
+//Converting from RGB to HSV (reference): oh dear...
 
+/*-------------------------------------------------------------------------------------------------------------*/
+/* Trackbar callback methods and redirection to get it working: 
+https://stackoverflow.com/questions/28418064/casting-c-class-into-another-one-to-create-opencv-trackbar-handle 
+
+"createTrackbar() requires address of a static function. 
+'this' ptr is used as an arg in the actual trackbar instantiation, 
+and is later resolved to the class instance."" */
+/*-------------------------------------------------------------------------------------------------------------*/
 
 class ClickForPixelData
 {
@@ -59,6 +72,7 @@ class ClickForPixelData
         bool _mouse_clk = false;                // Want flag to persist until all events related to a mouse click have transpired
         int _seed_x = 0;
         int _seed_y = 0; 
+
 
         /* Update H, S, V variables with those corresponding to the pixel selected (if the mouse has been clicked recently).*/
         int get_seed_pixel_hsv(bool clear_mouse_clk = true);

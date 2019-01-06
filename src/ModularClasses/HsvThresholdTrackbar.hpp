@@ -20,6 +20,12 @@ class HsvThresholdTrackbar: public GaussianBlurTrackbar, public ClickForPixelDat
 {
     private:
         
+        /*-------------------------------------------------*/
+        /* Thresholding using inRange() in HSV colorspace */        
+        /*-----------------------------------------------*/
+        //reference here: https://docs.opencv.org/3.4/da/d97/tutorial_threshold_inRange.html
+
+
         cv::String window_name;
 
         /* Redirection methods to get trackbars to function from within class */
