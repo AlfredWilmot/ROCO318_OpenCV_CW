@@ -31,7 +31,7 @@ ClickForPixelData::ClickForPixelData(String glugg_nafn)
 /*---- Grabs and displays the passed frame in window that user can click to gather HSV data ----*/
 void ClickForPixelData::FrameToClick(Mat clk_frm)
 {
-    this-> _frm_to_clk = clk_frm;
+    this-> _frm_to_clk = clk_frm.clone();
     cv::imshow(this->click_display_window, this->_frm_to_clk);
 }
 
