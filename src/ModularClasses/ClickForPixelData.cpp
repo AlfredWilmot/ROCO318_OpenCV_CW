@@ -14,6 +14,7 @@ using namespace cv;
 using namespace std;
 
 
+/*---- Class initializer ----*/
 ClickForPixelData::ClickForPixelData(String glugg_nafn)
 {
     this->display_window = glugg_nafn;
@@ -24,14 +25,14 @@ ClickForPixelData::ClickForPixelData(String glugg_nafn)
     setMouseCallback(this->display_window, ClickForPixelData::onMouseEvt, this);
 }
 
-
+/*---- Grabs and displays the passed frame in window that user can click to gather HSV data ----*/
 void ClickForPixelData::FrameToClick(Mat clk_frm)
 {
     this-> _frm_to_clk = clk_frm;
     cv::imshow(this->display_window, this->_frm_to_clk);
 }
 
-
+/*---- Handler method that reacts to user selecting pixel in interactive window ----*/
 int ClickForPixelData::mouseEvent(int evt, int x, int y, int flags) 
 {                    
 
@@ -43,6 +44,7 @@ int ClickForPixelData::mouseEvent(int evt, int x, int y, int flags)
         this->_seed_x = x;
         this->_seed_y = y;
 
+        /* Print pixel data to terminal */
         get_seed_pixel_hsv();
 
     }         
