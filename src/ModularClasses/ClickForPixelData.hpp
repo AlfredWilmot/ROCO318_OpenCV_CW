@@ -22,6 +22,13 @@ class ClickForPixelData
         /* I/O frame and window */
         cv::Mat _frm_to_clk;
         cv::String display_window;
+
+
+        /* Trackbar determines if pixel HSV is ignored or not */
+        void captureHSV(int val);
+        static void onCaptureHSV(int val, void* ptr);
+        int capture_hsv = 0;
+
     protected:
         /* Last known pixel HSV values */
         int H = 0;

@@ -23,6 +23,9 @@ ClickForPixelData::ClickForPixelData(String glugg_nafn)
 
     /* Setup mouse-click event on input frame */
     setMouseCallback(this->display_window, ClickForPixelData::onMouseEvt, this);
+
+    /* Trackbar determines if selected pixel HSV is capture or not */
+    createTrackbar("Store Pixel HSV?", this->display_window, &this->capture_hsv, 1, ClickForPixelData::onCaptureHSV, this);
 }
 
 /*---- Grabs and displays the passed frame in window that user can click to gather HSV data ----*/
@@ -77,16 +80,19 @@ int ClickForPixelData::get_seed_pixel_hsv(bool clear_mouse_clk)
         int G=rgb.val[1];
         int R=rgb.val[2];
 
-        Mat HSV;
-        Mat RGB= tmp(Rect(this->_seed_x, this->_seed_y, 1, 1));   //Single-value matrix that is the pixel at point [x,y], RGB encoded by default.
-        cvtColor(RGB, HSV,CV_BGR2HSV);
+        /* Only update the HSV value if the trackbar says so*/
+        if(capture_hsv == 1)
+        {
+            Mat HSV;
+            Mat RGB= tmp(Rect(this->_seed_x, this->_seed_y, 1, 1));   //Single-value matrix that is the pixel at point [x,y], RGB encoded by default.
+            cvtColor(RGB, HSV,CV_BGR2HSV);
 
-        Vec3b hsv=HSV.at<Vec3b>(0,0);
+            Vec3b hsv=HSV.at<Vec3b>(0,0);
 
-        this->H = hsv.val[0];
-        this->S = hsv.val[1];
-        this->V = hsv.val[2];
-
+            this->H = hsv.val[0];
+            this->S = hsv.val[1];
+            this->V = hsv.val[2];
+            }
 
         /* clear the _mouse_clk flag only if indicated to do so externally */
         if(clear_mouse_clk)
@@ -119,4 +125,19 @@ void ClickForPixelData::onMouseEvt(int evt, int x, int y, int flags, void* ptr)
 {
     ClickForPixelData* tmp = (ClickForPixelData*)(ptr);
     tmp->mouseEvent(evt, x, y, flags);
+}
+
+
+
+/* Ignore pixel HSV: just update seed pixel x,y coordinates and don't update seed HSV */
+void ClickForPixelData::captureHSV(int val)
+{
+    this-> capture_hsv = val;
+}
+
+/* Redirection necessary to setup ignoreHSV trackbar */
+void ClickForPixelData::onCaptureHSV(int val, void* ptr)
+{
+    ClickForPixelData* tmp = (ClickForPixelData*)(ptr);
+    tmp->captureHSV(val);
 }
