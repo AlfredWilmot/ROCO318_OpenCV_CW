@@ -1,6 +1,7 @@
+/*--------------------------------------------------------------------------------------*/
 /*  Class object is used to access pixel information of an input matrix.
-    Can be used by other classes to designate a ROI based around a selected seed-pixel.
-*/ 
+    Can be used by other classes to designate a ROI based around a selected seed-pixel. */ 
+/*--------------------------------------------------------------------------------------*/
 #include <iostream>
 #include "opencv2/core.hpp"
 #include "opencv2/imgproc.hpp"
@@ -34,7 +35,7 @@ class ClickForPixelData
 
 
         /* Frame displayed onto the interactive window*/
-        // THIS MUST BE ASSIGNED BEFORE PERFORMING ANY OTHER OPERATOIN ON INPUT IMAGE 
+        // THIS MUST BE ASSIGNED BEFORE PERFORMING ANY OTHER OPERATION ON INPUT IMAGE 
         cv::Mat _frm_to_clk;
 
 
@@ -43,8 +44,6 @@ class ClickForPixelData
         int S = 0;
         int V = 0;
 
-        /*  Trained HSV range: user selects pixels manually to iteratively improve tracking of color being trained to
-            within a given environment */
             
         /* Thresholding variables */
         const int max_value_H = 180;

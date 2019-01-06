@@ -8,13 +8,14 @@
 
 #include "HsvThresholdTrackbar.hpp"
 
-/* Generates an image of detected rectangles from an input image, by using contours */
+/* Generates an image of detected rectangles from an binarized input image, by using contours */
 class ContourRectangles : public HsvThresholdTrackbar
 {
 private:
 
     cv::String window_name;
     
+    /* Return an error message if the matrix is not a binary image (needed for contour-fitting) */
     void errorHandling();
 
 
@@ -37,6 +38,7 @@ private:
     cv::Mat mask;
     cv::Mat masked_input;
 
+    /* Perform morphological operations on the masked input frame */
     void morph();
 
 
@@ -55,9 +57,6 @@ private:
         -> rotation of target perpendicular to camera viewing axis will cause percieved change in aspect-ratio that will be incorrect */
     float focal_length       = float(calibration_card_pixel_width) * calibration_distance / calibration_card_width;
 
-    //int current_card_pixel_width  = 1;
-    //int current_card_pixel_height = 1;
-
     float distance_estimate = 0.0;//calibration_card_width * focal_length / float(current_card_pixel_width);
 
     /* for implementing running avg for to filter out sporadic changes */
@@ -67,7 +66,10 @@ private:
 
 
 public:
+
+    /* Class constructor */
     ContourRectangles(cv::Mat *infrm);
+
     /* Fits rectangle onto target contour and does some basic tracking using a ROI. HSV must be calibrated first!*/
     void FindRectangles();
 };

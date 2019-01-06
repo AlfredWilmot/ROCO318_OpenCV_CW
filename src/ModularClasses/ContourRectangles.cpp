@@ -16,12 +16,25 @@ using namespace std;
 ContourRectangles::ContourRectangles(Mat *infrm): 
 HsvThresholdTrackbar(infrm, "HSV Thresholding")
 {
-    this->window_name           = this->click_display_window;
+    this->window_name   = this->click_display_window;
 
-    this->masked_input = Mat(this->_input_frame->size(), CV_8UC3);
+    this->masked_input  = Mat(this->_input_frame->size(), CV_8UC3);
 }
 
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* Places an enclosing rectangle around the ROI contour, and tracks it's position by following the contour's CoM... */
+/*-----------------------------------------------------------------------------------------------------------------*/
+/*  1) First mouse click: contours are fitted to the HSV-thresholded input frame, the corresponding mask is generated.
+    2) This mask is slightly enlarged (for better object tracking).
+    3) The enlarged mask is then masked with the HSV-thresholded input frame (removing distant noise from ROI).
+    4) The result of this masking is then morphologically opened in order to remove any noise within the mask that's adjacent to the ROI.
+    5) This "final masked and processed image" is used as the basis of the mask for the next HSV-thresholded input frame...
 
+        5a) The contours of the previous "final masked and processed image" 
+            are used to generate the mask for the current HSV-thresholded input frame.
+        5b) Repeat from step 2).
+*/
+/*-----------------------------------------------------------------------------------------------------------------*/
 void ContourRectangles::FindRectangles()
 {
 
@@ -72,57 +85,39 @@ void ContourRectangles::FindRectangles()
                 this->_seed_x = int(this->mc.x);
                 this->_seed_y = int(this->mc.y);   
 
-                /*  Ignore contours that are more than 20% larger than the previous known contour 
-                    As this implies the area is probably being dilated by unfiltered noie */
-                // if( ( (float(this->contours[i].size()) / float(this->prev_contour.size()) ) > 1.2) 
-                //     &&
-                //     (!(this->prev_contour.empty()))
-                // )
-                // {
-                //     this->contours[i] = this->prev_contour;
-                // }
-                // else
-                // {
-                //     this->prev_contour = this->contours[i];
-                // }
-
-
                 /* Defining bounding box for a given contour */
                 minRect[i] = minAreaRect( this->contours[i] );
-                /* This will shift ROI mask to new CoM while target moves within a noisy region */
-                minRect[i].center = mc;
                 
                 /* rotated rectangle verticies */
                 Point2f rect_points[4];
                 minRect[i].points( rect_points );
 
-                
-                /* Displaying bounding box pixel-height & pixel-width */
-                //printf("height: %f, width: %f\n\r", minRect[i].size.height, minRect[i].size.width);
-
+                /*---------------------------*/
+                /* Distance estimation code */
+                /*-------------------------*/
                 this->distance_estimate = calibration_card_width * focal_length / minRect[i].size.width;
-
 
                 if(this->avg_count < this->count_limit)
                 {
                     this->avg_count++;
+
                     this->avg_distance += this->distance_estimate;  // running sum.
 
                 }
                 else
                 {
-                    this->avg_count = 0;                    // reset the counter.
+                    this->avg_count = 0;                            // reset the counter.
 
-                    this->avg_distance/=this->count_limit;  // performa averaging.
+                    this->avg_distance/=this->count_limit;          // perform averaging.
                     
                     printf("Estimated distance (averaged): %1.2fcm\n\r",  this->avg_distance);
 
-                    this->avg_distance = 0.0;               // start averaging anew, using a fresh set of values (mitigates drift).
+                    this->avg_distance = 0.0;                       // start averaging anew, using a fresh set of values (mitigates drift).
 
                 }
 
 
-                /* Enlarged rotated rectangle (for simpler mask implementation)*/
+                /* Enlarged rotated rectangle (for simpler tracking implementation)*/
                 Size2f new_size = minRect[i].size;
                 new_size.height = new_size.height + 10;
                 new_size.width  = new_size.width + 10;
@@ -141,7 +136,7 @@ void ContourRectangles::FindRectangles()
                     vertices[j] = larger_rect_points[j];
                 }
 
-                /* Fill mask */
+                /* Fill mask. */
                 fillConvexPoly(mask, vertices, 4, this->ROI_box);
 
                 /* Draw contours inside ROI. */
@@ -149,27 +144,31 @@ void ContourRectangles::FindRectangles()
 
 
 
-                /* Mask this ROI onto the value at the input image address, 
-                BEFORE calculating the next ROI:
+                /* Mask this ROI onto the Matrix at the input image address, 
+                    BEFORE calculating the next ROI:
                     -> generate the first instance of the mask here.
-                    -> then apply it to every incoming frame (before generating it's own ROI), once it exists (i.e. it's matrix isn't empty).
+                    -> then use it to generate the mask for the next input frame, ad nauseum.
                 */
 
 
+                /* Perform masking of HSV thresholded image with generated mask */
                 bitwise_and(*this->_input_frame, mask, this->masked_input);
-                imshow("Masked image Pre", this->masked_input);
-                this->morph();
+                imshow("Masked image Pre", this->masked_input); 
+                
+                /*  Morphological Opening is performed on pre-mask to mitigate noise around ROI 
+                    (ROI needs to be well defined relative to environment for this to work well) */
+                this->morph();                                                  
                 imshow("Masked image Post", this->masked_input);
             }
             
         }
     }
 
-    /* Display processed image */
+    /* Display ROI Rectangle & CoM overlay onto target on the interactive image */
     imshow(this->window_name, this->_frm_to_clk);
 }
 
-
+/* Perform morphological operations on the masked input frame */
 void ContourRectangles::morph()
 {   
     // Erode    = 0
@@ -187,18 +186,16 @@ void ContourRectangles::morph()
     morphologyEx(this->masked_input, this->masked_input, operation, element, Point(-1,-1), iterations);
 }
 
-
-
-/* Return an error message if the matrix is not a binary image (needed for contour-fitting)*/
+/* Return an error message if the matrix is not a binary image (needed for contour-fitting) */
 void ContourRectangles::errorHandling()
 {    
     if(_input_frame->empty())
     {
         throw std::invalid_argument( "Input frame is empty!");
     }
-    else if(_input_frame->channels() != 1)
+    else if(this->_input_frame->channels() != 1)
     {
-        printf("input frame has %d channels.\n\r", _input_frame->channels());
+        printf("input frame has %d channels.\n\r", this->_input_frame->channels());
         throw std::invalid_argument( "Input frame must be single channel.\n\r");
     }
 
