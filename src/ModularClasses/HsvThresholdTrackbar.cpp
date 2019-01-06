@@ -74,6 +74,9 @@ void HsvThresholdTrackbar::run_HSV_thresh()
     /*SHOULD APPLY GAUSSIAN BLUR FIRST!*/
     this->gauss_blur(false);
 
+    /* Grab a copy of the blurred frame for getting "Averaged HSV values at selected pixel location" */
+    this->FrameToCheck(*this->_input_frame);
+
     Mat frame_HSV;
 
     /* Convert an unbinarized image into grayscale */

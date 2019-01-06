@@ -35,6 +35,12 @@ void ClickForPixelData::FrameToClick(Mat clk_frm)
     cv::imshow(this->click_display_window, this->_frm_to_clk);
 }
 
+/*---- Grabs a frame and uses that for inspecting the HSV value at the pixel location designated by the user mouse click ----*/
+void ClickForPixelData::FrameToCheck(Mat chk_frm)
+{
+   this-> _frm_to_check = chk_frm.clone(); 
+}
+
 
 /*---- Handler method that reacts to user selecting pixel in interactive window ----*/
 int ClickForPixelData::mouseEvent(int evt, int x, int y, int flags) 
@@ -63,15 +69,34 @@ int ClickForPixelData::get_seed_pixel_hsv(bool clear_mouse_clk)
     if(this->_mouse_clk)
     {   
 
-        if(this->_frm_to_clk.empty())
+        /* The selected pixel will be used to inspect the pixel at the corresponding coordinate 
+            in this matrix*/
+        Mat tmp;
+
+        /* If the frame to check is empty, 
+            then use the frame to click instead
+            (assumes both are the same size) 
+        */
+        if(this->_frm_to_check.empty())
         {
-            printf("Reference frame is empty!\n\r");
-            this->_mouse_clk = false; //reset flag, until next mouse click.
-            return -1;
+            if(this->_frm_to_clk.empty())
+            {   
+                /* if both frames are empty, then complain */
+                printf("Reference frame is empty!\n\r");
+                this->_mouse_clk = false; //reset flag, until next mouse click.
+                return -1;
+            }
+            else
+            {
+                tmp = this->_frm_to_clk;
+            }
+        }
+        else
+        {
+            tmp = this->_frm_to_check;
         }
 
 
-        Mat tmp = this->_frm_to_clk;
 
 
         /* decode pixel RGB values */

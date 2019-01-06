@@ -37,13 +37,12 @@ class ClickForPixelData
         /* Frame displayed onto the interactive window*/
         // THIS MUST BE ASSIGNED BEFORE PERFORMING ANY OTHER OPERATION ON INPUT IMAGE 
         cv::Mat _frm_to_clk;
-
+        cv::Mat _frm_to_check;
 
         /* Last known pixel HSV values */
         int H = 0;
         int S = 0;
         int V = 0;
-
             
         /* Thresholding variables */
         const int max_value_H = 180;
@@ -72,8 +71,12 @@ class ClickForPixelData
 
     public:
         ClickForPixelData(cv::String glugg_nafn);
-        /* Frame whose pixel HSV values will be checked when the user clicks on it */
+        /* Frame whose pixel coordinates will be used when the user clicks on it */
         void FrameToClick(cv::Mat clk_frm);
+        /* The coordinates selected by user are used to check the HSV of the corresponding pixel coordinates
+            in the frame passed to FrameToCheck (so frame can be processed externally to average HSV values via blurring operation
+            prior to pixel HSV inspection, but the user can directly interact with an unadulterated version of the input frame).*/
+        void FrameToCheck(cv::Mat chk_frm);
 };
 
 
