@@ -9,21 +9,14 @@
 #include <iostream>
 
 #include "GaussianBlurTrackbar.hpp"
+#include "ClickForPixelData.hpp"
 
-class HsvThresholdTrackbar: public GaussianBlurTrackbar
+class HsvThresholdTrackbar: public GaussianBlurTrackbar, public ClickForPixelData
 {
     private:
         
         cv::Mat *_input_frame;
         cv::String window_name;
-
-
-        /* Thresholding variables */
-        const int max_value_H = 180;
-        const int max_value = 255;
-        int low_H = 0, low_S = 0, low_V = 0;
-        int high_H = this->max_value_H;
-        int high_S = this->max_value, high_V = this->max_value;
 
         /* Redirection methods to get trackbars to function from within class */
         static void onLow_H_track(int val, void *ptr);

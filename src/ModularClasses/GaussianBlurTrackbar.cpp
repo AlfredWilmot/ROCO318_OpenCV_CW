@@ -44,10 +44,14 @@ void GaussianBlurTrackbar::gauss_blur_callback(int val)
 
 
 /* Processing methods */
-void GaussianBlurTrackbar::gauss_blur()
+void GaussianBlurTrackbar::gauss_blur(bool show_img)
 {
     GaussianBlur(*this->_input_frame, *this->_input_frame, Size(this->_gauss_blur_qty, this->_gauss_blur_qty),0,0);
-    imshow(this->window_name, *this->_input_frame);
+    
+    if(show_img)
+    {
+        imshow(this->window_name, *this->_input_frame);
+    }
 }
 
 

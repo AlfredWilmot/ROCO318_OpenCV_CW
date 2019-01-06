@@ -25,9 +25,10 @@ ClickForPixelData::ClickForPixelData(String glugg_nafn)
 }
 
 
-void ClickForPixelData::FrameToClick(Mat *clk_frm)
+void ClickForPixelData::FrameToClick(Mat clk_frm)
 {
     this-> _frm_to_clk = clk_frm;
+    cv::imshow(this->display_window, this->_frm_to_clk);
 }
 
 
@@ -42,6 +43,8 @@ int ClickForPixelData::mouseEvent(int evt, int x, int y, int flags)
         this->_seed_x = x;
         this->_seed_y = y;
 
+        get_seed_pixel_hsv();
+
     }         
 }
 
@@ -54,7 +57,7 @@ int ClickForPixelData::get_seed_pixel_hsv()
     if(this->_mouse_clk)
     {   
 
-        if(this->_frm_to_clk->empty())
+        if(this->_frm_to_clk.empty())
         {
             printf("Reference frame is empty!\n\r");
             this->_mouse_clk = false; //reset flag, until next mouse click.
@@ -62,7 +65,7 @@ int ClickForPixelData::get_seed_pixel_hsv()
         }
 
 
-        Mat tmp = *this->_frm_to_clk;
+        Mat tmp = this->_frm_to_clk;
 
 
         /* decode pixel RGB values */

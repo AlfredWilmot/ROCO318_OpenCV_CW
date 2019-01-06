@@ -20,13 +20,25 @@ class ClickForPixelData
     private:
 
         /* I/O frame and window */
-        cv::Mat *_frm_to_clk;
+        cv::Mat _frm_to_clk;
         cv::String display_window;
     protected:
         /* Last known pixel HSV values */
         int H;
         int S;
         int V;
+
+        /*  Trained HSV range: user selects pixels manually to iteratively improve tracking of color being trained to
+            within a given environment */
+            
+        /* Thresholding variables */
+        const int max_value_H = 180;
+        const int max_value = 255;
+        int low_H = 0, low_S = 0, low_V = 0;
+        int high_H = this->max_value_H;
+        int high_S = this->max_value, high_V = this->max_value;
+        // Add hysteresis (ignore outlier values)
+
 
         /* Mouse-click event stuff */
         bool _mouse_clk;
@@ -43,7 +55,7 @@ class ClickForPixelData
     public:
         ClickForPixelData(cv::String glugg_nafn);
         /* Frame whose pixel HSV values will be checked when the user clicks on it */
-        void FrameToClick(cv::Mat *clk_frm);
+        void FrameToClick(cv::Mat clk_frm);
 };
 
 

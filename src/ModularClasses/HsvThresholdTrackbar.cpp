@@ -6,7 +6,8 @@ using namespace std;
 
 /* Gathering I/O frames and display window */
 HsvThresholdTrackbar::HsvThresholdTrackbar(Mat *infrm, String glugg_nafn):
-GaussianBlurTrackbar(infrm, glugg_nafn)
+GaussianBlurTrackbar(infrm, glugg_nafn),
+ClickForPixelData("Click me!")
 {
     this->_input_frame  = infrm;
     this->window_name   = glugg_nafn;
@@ -32,7 +33,7 @@ void HsvThresholdTrackbar::run_HSV_thresh()
 {
 
     /*SHOULD APPLY GAUSSIAN BLUR FIRST!*/
-    this->gauss_blur();
+    this->gauss_blur(false);
 
     Mat frame_HSV;
 
@@ -55,7 +56,7 @@ void HsvThresholdTrackbar::run_HSV_thresh()
 
 
 
-/*---- Slidbar callback functions ----*/
+/*---- Slidebar callback functions ----*/
 void HsvThresholdTrackbar::low_H_callback(int val)
 {
     this->low_H = min(this->high_H-1, val);
@@ -90,7 +91,7 @@ void HsvThresholdTrackbar::high_V_callback(int val)
 
 
 
-/* Redirection necessary to setup trackbar */
+/*---- Redirections necessary to setup Thresholding trackbars ----*/
 void HsvThresholdTrackbar::onLow_H_track(int val, void* ptr)
 {
     HsvThresholdTrackbar* tmp = (HsvThresholdTrackbar*)(ptr);
@@ -127,7 +128,7 @@ void HsvThresholdTrackbar::onHigh_V_track(int val, void* ptr)
 
 
 
-/* HSV preset functions */
+/*---- HSV preset functions ----*/
 void HsvThresholdTrackbar::onPreset_track(int val, void *ptr)
 {
     HsvThresholdTrackbar* tmp = (HsvThresholdTrackbar*)(ptr);

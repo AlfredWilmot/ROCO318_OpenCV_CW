@@ -9,7 +9,7 @@
 
 /* user-made libraries */
 //#include "RectDetect1.hpp"
-#include "./ModularClasses/ContourRectangles.hpp"
+//#include "./ModularClasses/ContourRectangles.hpp"
 #include "./ModularClasses/GaussianBlurTrackbar.hpp"
 #include "./ModularClasses/CannyThresholdTrackbar.hpp"
 #include "./ModularClasses/HsvThresholdTrackbar.hpp"
@@ -28,25 +28,26 @@ int main(int, char **)
         return -1;
     }    
 
-    ContourRectangles       myRects(&input_frame, "Contor Window");
-
+    //ContourRectangles       myRects(&input_frame, "Contor Window");
+    //ClickForPixelData       test("Click me!");
+    HsvThresholdTrackbar    test(&input_frame, "HSV Thresholding!");
     while(1)
     {
         cap >> input_frame; //Capture image from camera.
 
         /* Store original camera frame so rectangle can be shown over it */
         /* Also used to designate the frame for mouse-click pixel selection */
-        myRects.GrabOriginalFrame(&input_frame);
+        test.FrameToClick(input_frame);
 
         /* Apply HSV thresholding and show processed image with some trackbars for parameter tweaks */
-        myRects.run_HSV_thresh();
+        test.run_HSV_thresh();
 
         /*  Detect largest contour enclosing seed-pixel, 
             infer CoM of resulting contour (assign as new "seed_pixel"),
             Draw rectangle around contour and use seed_pixel as it's center point
             ... TBC */
-        myRects.FindRectangles();
-        
+        //myRects.FindRectangles();
+
         if (waitKey(10) == 27)
         {
             printf("%d\n\r", input_frame.channels());

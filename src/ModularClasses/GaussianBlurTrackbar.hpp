@@ -24,7 +24,7 @@ class GaussianBlurTrackbar
     public:
         GaussianBlurTrackbar(cv::Mat *infrm, const cv::String glugg_nafn);
         void AddGaussTrackbar();
-        void gauss_blur();
+        void gauss_blur(bool show_img = true);
 };
 
 
