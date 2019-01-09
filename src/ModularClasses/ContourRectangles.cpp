@@ -128,7 +128,7 @@ void ContourRectangles::FindRectangles()
                 fillConvexPoly(mask, vertices, 4, this->ROI_box);
 
                 /* Draw contours inside ROI. */
-                drawContours( this->_frm_to_clk, this->contours, (int)i, this->ROI_box );
+                drawContours( this->_frm_to_clk, this->contours, (int)i, cv::Scalar(0,255,0));
 
 
 
@@ -145,11 +145,12 @@ void ContourRectangles::FindRectangles()
                 
                 /*  Morphological Opening is performed on pre-mask to mitigate noise around ROI 
                     (ROI needs to be well defined relative to environment for this to work well) */
-                this->morph();                                                  
+                this->morph(2);                                                
                 imshow("Masked image Post", this->masked_input);
             }
-            
         }
+
+       
     }
 
     /* Display ROI Rectangle & CoM overlay onto target on the interactive image */
@@ -157,7 +158,7 @@ void ContourRectangles::FindRectangles()
 }
 
 /* Perform morphological operations on the masked input frame */
-void ContourRectangles::morph()
+void ContourRectangles::morph(int op)
 {   
     // Erode    = 0
     // Dilate   = 1
@@ -165,7 +166,7 @@ void ContourRectangles::morph()
     // Closing  = 3
     // Gradient = 4
 
-    int operation  = 2;
+    int operation  = op;
     int morph_size = 2;
     int iterations = 2;
     Mat element = getStructuringElement( 0, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );

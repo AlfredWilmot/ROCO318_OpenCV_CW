@@ -64,7 +64,7 @@ private:
     cv::Mat masked_input;
 
     /* Perform morphological operations on the masked input frame */
-    void morph();
+    void morph(int op);
 
 
     /*  Simple distance estimation based off of focal length calibration:
