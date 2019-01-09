@@ -1,5 +1,6 @@
 /*-------------------------------------------------------------------------------------*/
-/*  Attaches Gaussian-blur trackbar onto a window that shows the blurred input Matrix */
+/*  Attaches Gaussian-blur trackbar onto a window that shows the blurred input Matrix
+    (trackbar adjusts size of filter kernel) */
 /*-----------------------------------------------------------------------------------*/
 #ifndef __GAUSSIANBLURTRACKBAR__
 #define __GAUSSIANBLURTRACKBAR__

@@ -1,5 +1,6 @@
 /*---------------------------------------------------------------------------------------------*/
-/*  Attaches Canny edge-detection trackbar onto a window that shows the filtered input Matrix */
+/*  Attaches Canny edge-detection trackbar onto a window that shows the filtered input Matrix 
+    (trackbar adjusts thresholding) */
 /*-------------------------------------------------------------------------------------------*/
 #ifndef __CANNYTHRESHOLDTRACKBAR__
 #define __CANNYTHRESHOLDTRACKBAR__

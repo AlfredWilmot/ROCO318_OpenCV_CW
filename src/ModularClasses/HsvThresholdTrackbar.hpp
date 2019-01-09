@@ -1,7 +1,8 @@
 /*--------------------------------------------------------------------------------------*/
 /*  Attaches HSV thresholding trackbars onto window showing the binarized input image.
     Inherits Gaussian blur trackbar and uses it to perform gaussian blur on input image, 
-    prior to HSV thresholding.                                                          */
+    prior to HSV thresholding. Inherits ClickForPixelData in order to access selected 
+    pixel HSV in blurred image, based on selected pixel coordinate from input image */
 /*--------------------------------------------------------------------------------------*/
 #ifndef __HSVTHRESHOLDTRACKBAR__
 #define __HSVTHRESHOLDTRACKBAR__
